@@ -1,1 +1,0 @@
-This product is developed by zhc and cyc;
