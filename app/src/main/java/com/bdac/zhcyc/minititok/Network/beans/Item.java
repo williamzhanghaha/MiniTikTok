@@ -40,4 +40,19 @@ public class Item {
         return video_url;
     }
 
+    public void setStudent_id(String student_id) {
+        this.student_id = student_id;
+    }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
+
+    public void setImage_url(String image_url) {
+        this.image_url = image_url;
+    }
+
+    public void setVideo_url(String video_url) {
+        this.video_url = video_url;
+    }
 }

@@ -30,10 +30,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * 网络相关：
- * postVideo(Uri imgUrl,Uri videoUrl,Context context,RecycleView rv)
+ *
+ * postVideo(Uri imgUrl,Uri videoUrl,Context context,RecyclerView rv)
  * context是发布视频的那个activity.this
  *
- * fetchFeed(RecycleView rv)
+ * fetchFeed(RecyclerView rv)
  */
 
 public class NetworkUtils {
@@ -41,11 +42,11 @@ public class NetworkUtils {
 
     private static final String BASE_URL = "http://10.108.10.39:8080/";
     private static final String STUDENT_ID = "1120172129";
-    private static final String USER_NAME = "CHENYICHENG";
-    private static final String IMG_NAME = "img";
+    private static final String USER_NAME = "Cyc and zhc";
+    private static final String IMG_NAME = "image";
     private static final String VIDEO_NAME = "video";
 
-    private static List<Feed> feeds = null;
+    private static List<Feed>  feeds = null;
     private static List<Item> items = null;
 
     public static void postVideo(Uri imgUrl, Uri videoUrl, Context context, final RecyclerView rv) {
@@ -87,8 +88,7 @@ public class NetworkUtils {
                     public void onResponse(Call<FeedResponse> call, Response<FeedResponse> response) {
                         Log.d(TAG, "get response!");
                         feeds = response.body().getFeeds();
-                        rv.getAdapter().notifyDataSetChanged();
-
+//                        rv.getAdapter().notifyDataSetChanged();
                     }
 
                     @Override
