@@ -11,6 +11,7 @@ import com.bdac.zhcyc.minititok.Network.beans.Feed;
 import com.bdac.zhcyc.minititok.Network.beans.FeedResponse;
 import com.bdac.zhcyc.minititok.Network.beans.Item;
 import com.bdac.zhcyc.minititok.Network.beans.PostVideoResponse;
+import com.bdac.zhcyc.minititok.UI.FeedsAdapter;
 
 import java.io.File;
 import java.util.List;
@@ -72,7 +73,7 @@ public class NetworkUtils {
                 DatabaseUtils.saveItemToDatabase(item);
 
                 //TODO 刷新个人主页的RecyclerView
-                rv.getAdapter().notifyDataSetChanged();
+                //rv.getAdapter().notifyDataSetChanged();
 
                 //TODO 更新个人主页的List<Item>
             }
@@ -98,6 +99,10 @@ public class NetworkUtils {
                         Log.d(TAG, "get response!");
                         feeds = response.body().getFeeds();
                         //TODO 更新Feed流(主页)的List<Feed>
+                        if (rv.getAdapter() instanceof FeedsAdapter) {
+                            FeedsAdapter feedsAdapter = (FeedsAdapter)rv.getAdapter();
+                            feedsAdapter.refresh(feeds);
+                        }
 //                        rv.getAdapter().refrush(DatabaseUtils.loadItemsFromDatabas());
                     }
 
