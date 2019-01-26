@@ -40,8 +40,6 @@ public class MainActivity extends FragmentActivity {
     private FloatingActionButton fab;
     private BottomAppBar bottomAppBar;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +56,7 @@ public class MainActivity extends FragmentActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO 点击fab
+                //TODO 点击fab @Sebb: 我写了权限申请，打开camera
                 if (ContextCompat.checkSelfPermission(MainActivity.this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                         ||

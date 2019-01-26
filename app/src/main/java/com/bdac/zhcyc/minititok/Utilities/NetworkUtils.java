@@ -71,7 +71,6 @@ public class NetworkUtils {
                 DatabaseUtils.saveItemToDatabase(item);
 
                 //TODO 刷新个人主页的RecyclerView
-                //rv.getAdapter().notifyDataSetChanged();
 
                 //TODO 更新个人主页的List<Item>
             }

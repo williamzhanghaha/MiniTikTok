@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHolder>{
 
-    List<Feed> feeds = new ArrayList<>();
+    private List<Feed> feeds = new ArrayList<>();
     private FeedListItemClickListener feedListItemClickListener;
 
     public void setFeeds(List<Feed> feeds) {
