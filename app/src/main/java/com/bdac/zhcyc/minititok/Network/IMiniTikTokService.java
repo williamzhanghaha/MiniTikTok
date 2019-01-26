@@ -23,7 +23,7 @@ public interface IMiniTikTokService {
 
     @Multipart
 
-    @POST("minidouyin/video")
+    @POST("/minidouyin/video")
     Call<PostVideoResponse> creatVideo(
             @Query("student_id") String studentId,
             @Query("user_name") String userName,
@@ -31,7 +31,7 @@ public interface IMiniTikTokService {
             @Part MultipartBody.Part video
             );
 
-    @GET("minidouyin/feed")
+    @GET("/minidouyin/feed")
     Call<FeedResponse> feedResponse();
 
 

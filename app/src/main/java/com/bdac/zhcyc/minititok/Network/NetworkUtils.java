@@ -13,6 +13,7 @@ import com.bdac.zhcyc.minititok.Network.beans.PostVideoResponse;
 import java.io.File;
 import java.util.List;
 
+import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -29,10 +30,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * 网络相关：
- * List<Feed> postVideo(Uri imgUrl,Uri videoUrl,Context context)
+ * postVideo(Uri imgUrl,Uri videoUrl,Context context,RecycleView rv)
  * context是发布视频的那个activity.this
  *
- * List<Item> fetchFeed()
+ * fetchFeed(RecycleView rv)
  */
 
 public class NetworkUtils {
@@ -41,13 +42,13 @@ public class NetworkUtils {
     private static final String BASE_URL = "http://10.108.10.39:8080/";
     private static final String STUDENT_ID = "1120172129";
     private static final String USER_NAME = "CHENYICHENG";
-    private static final String IMG_NAME = "cover_img";
+    private static final String IMG_NAME = "img";
     private static final String VIDEO_NAME = "video";
 
     private static List<Feed> feeds = null;
     private static List<Item> items = null;
 
-    public static List<Item> postVideo(final Uri imgUrl, Uri videoUrl, Context context) {
+    public static void postVideo(Uri imgUrl, Uri videoUrl, Context context, final RecyclerView rv) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -63,6 +64,7 @@ public class NetworkUtils {
             public void onResponse(Call<PostVideoResponse> call, Response<PostVideoResponse> response){
                 Log.d(TAG,"post response!");
                 items = response.body().getItems();
+                rv.getAdapter().notifyDataSetChanged();
             }
 
             @Override
@@ -70,15 +72,9 @@ public class NetworkUtils {
                 Log.d(TAG,"post failed!");
             }
         });
-
-        if(items!=null){
-            return items;
-        }else{
-            return null;
-        }
     }
 
-    public static List<Feed> fetchFeed(){
+    public static void fetchFeed(final RecyclerView rv){
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -91,18 +87,15 @@ public class NetworkUtils {
                     public void onResponse(Call<FeedResponse> call, Response<FeedResponse> response) {
                         Log.d(TAG, "get response!");
                         feeds = response.body().getFeeds();
+                        rv.getAdapter().notifyDataSetChanged();
+
                     }
 
                     @Override
                     public void onFailure(Call<FeedResponse> call, Throwable t) {
-                        Log.d(TAG,"get failed!");
+                        Log.d(TAG,t.getMessage());
                     }
                 });
-        if(feeds!=null){
-            return feeds;
-        }else{
-            return null;
-        }
     }
 
     private static MultipartBody.Part getMultipartFromUri(String name, Uri uri, Context context) {
