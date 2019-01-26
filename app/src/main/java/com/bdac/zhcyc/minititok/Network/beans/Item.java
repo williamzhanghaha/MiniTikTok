@@ -27,10 +27,6 @@ public class Item {
     @SerializedName("video_url")
     String video_url;
 
-
-
-
-
     public long getId() {
         return id;
     }

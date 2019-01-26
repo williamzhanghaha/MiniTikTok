@@ -2,7 +2,9 @@ package com.bdac.zhcyc.minititok;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.bdac.zhcyc.minititok.Utilities.DatabaseUtils;
 import com.bdac.zhcyc.minititok.Network.beans.Item;

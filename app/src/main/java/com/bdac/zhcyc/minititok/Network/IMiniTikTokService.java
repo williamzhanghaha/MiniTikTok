@@ -20,11 +20,9 @@ public interface IMiniTikTokService {
 //POST    url: http://10.108.10.39:8080/minidouyin/video
 //GET     url: http://10.108.10.39:8080/minidouyin/feed
 
-
     @Multipart
-
     @POST("/minidouyin/video")
-    Call<PostVideoResponse> creatVideo(
+    Call<PostVideoResponse> createVideo(
             @Query("student_id") String studentId,
             @Query("user_name") String userName,
             @Part MultipartBody.Part img,
@@ -33,6 +31,5 @@ public interface IMiniTikTokService {
 
     @GET("/minidouyin/feed")
     Call<FeedResponse> feedResponse();
-
 
 }

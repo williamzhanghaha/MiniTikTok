@@ -22,6 +22,4 @@ public class FeedResponse {
     public boolean isSuccess() {
         return isSuccess;
     }
-
-
 }

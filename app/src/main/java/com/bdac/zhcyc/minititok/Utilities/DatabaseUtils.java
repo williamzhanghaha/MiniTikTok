@@ -44,7 +44,7 @@ public class DatabaseUtils {
         }
     }
 
-    public static List<Item> loadItemsFromDatabas(){
+    public static List<Item> loadItemsFromDatabase(){
         if(mDb==null){
             return Collections.emptyList();
         }

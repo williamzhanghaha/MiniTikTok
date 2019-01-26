@@ -3,10 +3,8 @@ package com.bdac.zhcyc.minititok.Utilities;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
-import android.view.View;
 
 import com.bdac.zhcyc.minititok.Network.IMiniTikTokService;
-import com.bdac.zhcyc.minititok.Network.ResourceUtils;
 import com.bdac.zhcyc.minititok.Network.beans.Feed;
 import com.bdac.zhcyc.minititok.Network.beans.FeedResponse;
 import com.bdac.zhcyc.minititok.Network.beans.Item;
@@ -57,7 +55,7 @@ public class NetworkUtils {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        retrofit.create(IMiniTikTokService.class).creatVideo(
+        retrofit.create(IMiniTikTokService.class).createVideo(
                 STUDENT_ID,
                 USER_NAME,
                 getMultipartFromUri(IMG_NAME,imgUrl,context),
@@ -98,7 +96,7 @@ public class NetworkUtils {
                         Log.d(TAG, "get response!");
                         feeds = response.body().getFeeds();
                         //TODO 更新Feed流(主页)的List<Feed>
-//                        rv.getAdapter().refrush(DatabaseUtils.loadItemsFromDatabas());
+//                        rv.getAdapter().refrush(DatabaseUtils.loadItemsFromDatabase());
                     }
 
                     @Override

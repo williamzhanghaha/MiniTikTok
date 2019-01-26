@@ -1,4 +1,4 @@
-package com.bdac.zhcyc.minititok.Network;
+package com.bdac.zhcyc.minititok.Utilities;
 
 import android.annotation.SuppressLint;
 import android.content.ContentUris;
