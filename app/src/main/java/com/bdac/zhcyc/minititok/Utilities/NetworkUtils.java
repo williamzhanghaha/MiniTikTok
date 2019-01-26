@@ -1,10 +1,12 @@
-package com.bdac.zhcyc.minititok.Network;
+package com.bdac.zhcyc.minititok.Utilities;
 
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 
+import com.bdac.zhcyc.minititok.Network.IMiniTikTokService;
+import com.bdac.zhcyc.minititok.Network.ResourceUtils;
 import com.bdac.zhcyc.minititok.Network.beans.Feed;
 import com.bdac.zhcyc.minititok.Network.beans.FeedResponse;
 import com.bdac.zhcyc.minititok.Network.beans.Item;
@@ -32,7 +34,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * 网络相关：
  *
  * postVideo(Uri imgUrl,Uri videoUrl,Context context,RecyclerView rv)
- * context是发布视频的那个activity.this
+ * context是发布视频activity.this
  *
  * fetchFeed(RecyclerView rv)
  */
@@ -65,7 +67,14 @@ public class NetworkUtils {
             public void onResponse(Call<PostVideoResponse> call, Response<PostVideoResponse> response){
                 Log.d(TAG,"post response!");
                 items = response.body().getItems();
+
+                Item item = items.get(0);
+                DatabaseUtils.saveItemToDatabase(item);
+
+                //TODO 刷新个人主页的RecyclerView
                 rv.getAdapter().notifyDataSetChanged();
+
+                //TODO 更新个人主页的List<Item>
             }
 
             @Override
@@ -88,7 +97,8 @@ public class NetworkUtils {
                     public void onResponse(Call<FeedResponse> call, Response<FeedResponse> response) {
                         Log.d(TAG, "get response!");
                         feeds = response.body().getFeeds();
-//                        rv.getAdapter().notifyDataSetChanged();
+                        //TODO 更新Feed流(主页)的List<Feed>
+//                        rv.getAdapter().refrush(DatabaseUtils.loadItemsFromDatabas());
                     }
 
                     @Override

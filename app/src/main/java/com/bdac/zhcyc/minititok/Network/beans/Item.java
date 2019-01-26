@@ -9,9 +9,12 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * post方法取回的java beans
+ * 也是数据库的beans
  */
 
 public class Item {
+    long id;
+
     @SerializedName("student_id")
     String student_id;
 
@@ -23,6 +26,14 @@ public class Item {
 
     @SerializedName("video_url")
     String video_url;
+
+
+
+
+
+    public long getId() {
+        return id;
+    }
 
     public String getStudent_id() {
         return student_id;
@@ -38,6 +49,10 @@ public class Item {
 
     public String getVideo_url() {
         return video_url;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public void setStudent_id(String student_id) {

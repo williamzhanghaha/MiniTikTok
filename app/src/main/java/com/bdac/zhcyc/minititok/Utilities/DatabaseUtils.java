@@ -1,13 +1,17 @@
-package com.bdac.zhcyc.minititok.Database;
+package com.bdac.zhcyc.minititok.Utilities;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
+import com.bdac.zhcyc.minititok.Database.MiniTikTokContract;
+import com.bdac.zhcyc.minititok.Database.MiniTikTokDbHelper;
 import com.bdac.zhcyc.minititok.Network.beans.Feed;
 import com.bdac.zhcyc.minititok.Network.beans.Item;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,6 +20,11 @@ import java.util.List;
  * @date 2019/1/26
  */
 
+
+/**
+ * activity onCreated时需要调用 dbInit
+ * activity onDestory时需要调用 dbDestory
+ */
 public class DatabaseUtils {
     private static MiniTikTokDbHelper mDbHelper = null;
     private static SQLiteDatabase mDb = null;
@@ -40,7 +49,7 @@ public class DatabaseUtils {
             return Collections.emptyList();
         }
 
-        List<Item> items = null;
+        List<Item> items = new ArrayList<>();
         Cursor cursor = null;
 
         try{
@@ -79,6 +88,7 @@ public class DatabaseUtils {
                         cursor.getColumnIndexOrThrow(MiniTikTokContract.MiniTikTokEntry.COLUMN_VIDEO_URL)
                 );
                 Item item = new Item();
+                item.setId(id);
                 item.setStudent_id(studentId);
                 item.setUser_name(userName);
                 item.setImage_url(imageUrl);
@@ -96,13 +106,32 @@ public class DatabaseUtils {
         return items;
     }
 
-    public static void saveItem2Database(){
-        try{
+    public static void saveItemToDatabase(Item item){
+        String studentId = item.getStudent_id();
+        String userName = item.getUser_name();
+        String imageUrl = item.getImage_url();
+        String videoUrl = item.getVideo_url();
 
+        try{
+            ContentValues contentValues = new ContentValues();
+
+            contentValues.put(MiniTikTokContract.MiniTikTokEntry.COLUMN_STUDENT_ID,studentId);
+            contentValues.put(MiniTikTokContract.MiniTikTokEntry.COLUMN_USER_NAME,userName);
+            contentValues.put(MiniTikTokContract.MiniTikTokEntry.COLUMN_IMAGE_URL,imageUrl);
+            contentValues.put(MiniTikTokContract.MiniTikTokEntry.COLUMN_VIDEO_URL,videoUrl);
+
+            mDb.insert(MiniTikTokContract.MiniTikTokEntry.TABLE_NAME,null,contentValues);
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
 
+    public static void deleteItemFromDatabase(Item item){
+        String selection = MiniTikTokContract.MiniTikTokEntry._ID+" LIKE ?";
+        String [] selectionArgs = {""+item.getId()};
+
+        mDb.delete(MiniTikTokContract.MiniTikTokEntry.TABLE_NAME,selection,selectionArgs);
+        //TODO 刷新Feed流(主页)的RecyclerView
     }
 }
 

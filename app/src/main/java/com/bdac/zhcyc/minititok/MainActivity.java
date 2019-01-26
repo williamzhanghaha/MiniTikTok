@@ -1,25 +1,28 @@
 package com.bdac.zhcyc.minititok;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.provider.Telephony;
-import android.util.Log;
 
-import com.bdac.zhcyc.minititok.Network.NetworkUtils;
-import com.bdac.zhcyc.minititok.Network.beans.Feed;
+import com.bdac.zhcyc.minititok.Utilities.DatabaseUtils;
+import com.bdac.zhcyc.minititok.Network.beans.Item;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "Seb";
+    private static List<Item> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        DatabaseUtils.dbInit(this);
+    }
 
+    @Override
+    protected void onDestroy(){
+        DatabaseUtils.dbDestory();
+        super.onDestroy();
     }
 }
