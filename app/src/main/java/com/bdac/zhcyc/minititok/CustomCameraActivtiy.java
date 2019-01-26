@@ -44,7 +44,6 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     private MediaRecorder mMediaRecorder;
 
     private int rotationDegree = 0;
-    private int zoomValue = 0;
 
     private boolean isRecording = false;
     private boolean isFrontCamera = false;
@@ -79,17 +78,20 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
             }
         });
 
-        mSurfaceView.findViewById(R.id.sv_camera);
+
+        mSurfaceView = findViewById(R.id.sv_camera);
         mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         mSurfaceHolder.addCallback(this);
+
+        //TODO 照相 录像
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-
-
+        mCamera = getmCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
+        startPreview(surfaceHolder);
     }
 
     @Override
@@ -130,6 +132,7 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
 
         Camera camera = Camera.open(CAMERA_TYPE);
         rotationDegree = getCameraDisplayOrientation(CAMERA_TYPE);
+        camera.setDisplayOrientation(rotationDegree);
 
         Log.d(TAG,rotationDegree+"");
 

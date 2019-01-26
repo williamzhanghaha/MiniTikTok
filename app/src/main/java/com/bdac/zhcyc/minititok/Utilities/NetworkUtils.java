@@ -96,15 +96,15 @@ public class NetworkUtils {
                     public void onResponse(Call<FeedResponse> call, Response<FeedResponse> response) {
                         Log.d(TAG, "get response!");
                         feeds = response.body().getFeeds();
+
                         //TODO 更新Feed流(主页)的List<Feed>
 
                         if (rv.getAdapter() instanceof FeedsAdapter) {
                             FeedsAdapter feedsAdapter = (FeedsAdapter)rv.getAdapter();
                             feedsAdapter.refresh(feeds);
                         }
-//                        rv.getAdapter().refrush(DatabaseUtils.loadItemsFromDatabas());
-                    }
 
+                    }
                     @Override
                     public void onFailure(Call<FeedResponse> call, Throwable t) {
                         Log.d(TAG,t.getMessage());

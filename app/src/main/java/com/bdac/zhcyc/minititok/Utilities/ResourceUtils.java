@@ -17,7 +17,9 @@ import androidx.loader.content.CursorLoader;
  * @date 2019/1/25
  */
 
-//这个是别人的轮子
+/**
+ * 这个是老师的轮子
+ */
 public class ResourceUtils {
     /**
      * from: https://gist.github.com/HBiSoft/15899990b8cd0723c3a894c1636550a8

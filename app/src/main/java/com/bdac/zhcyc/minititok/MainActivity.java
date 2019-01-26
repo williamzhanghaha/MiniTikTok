@@ -2,6 +2,8 @@ package com.bdac.zhcyc.minititok;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -9,10 +11,13 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.bdac.zhcyc.minititok.UI.FeedsFragment;
@@ -25,12 +30,17 @@ import java.util.List;
 
 public class MainActivity extends FragmentActivity {
 
+    private final static int REQUST_CODE_CAMERA_AUDIO_STORAGE = 101;
+    private final static String TAG = "Seb";
+
     private static final int NUM_PAGES = 2;
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
 
     private FloatingActionButton fab;
     private BottomAppBar bottomAppBar;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +59,26 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onClick(View view) {
                 //TODO 点击fab
+                if (ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                        ||
+                        ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                        ||
+                        ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.RECORD_AUDIO)!= PackageManager.PERMISSION_GRANTED
+                ) {
+                    ActivityCompat.requestPermissions(
+                            MainActivity.this,
+                            new String[]{
+                                    Manifest.permission.CAMERA,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.RECORD_AUDIO
+                            },
+                            REQUST_CODE_CAMERA_AUDIO_STORAGE);
+                }else{
+                    startActivity(new Intent(MainActivity.this,CustomCameraActivtiy.class));
+                }
             }
         });
 
@@ -100,6 +130,28 @@ public class MainActivity extends FragmentActivity {
                 if (position == 0) {
                     bottomAppBar.setFabAlignmentMode(BottomAppBar.FAB_ALIGNMENT_MODE_CENTER);
                 }
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (permissions.length == 0 || grantResults.length == 0) {
+            return;
+        }
+
+        switch (requestCode) {
+            case REQUST_CODE_CAMERA_AUDIO_STORAGE: {
+                for (int i = 0; i < grantResults.length - 1; i++) {
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        Log.d(TAG, "granted");
+                    } else if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                        Log.d(TAG, "denied");
+                    }
+                }
+                break;
             }
         }
     }
