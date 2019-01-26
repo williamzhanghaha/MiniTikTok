@@ -15,6 +15,10 @@ import android.text.TextUtils;
 import java.net.URLDecoder;
 
 
+/**
+ * 这个也是老师给的轮子
+ */
+
 public class UriUtils {
 
     private UriUtils() {

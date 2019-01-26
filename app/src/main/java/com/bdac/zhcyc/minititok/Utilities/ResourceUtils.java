@@ -18,7 +18,7 @@ import androidx.loader.content.CursorLoader;
  */
 
 /**
- * 这个是老师的轮子
+ * 这个是老师给的的轮子
  */
 public class ResourceUtils {
     /**
