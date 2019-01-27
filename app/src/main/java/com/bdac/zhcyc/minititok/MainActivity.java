@@ -169,10 +169,12 @@ public class MainActivity extends FragmentActivity {
         public void transformPage(@NonNull View page, float position) {
             if (page == mPager.getChildAt(1)) {
                 if (position == 0) {
+                    Log.d(TAG, "transformPage: 1 pos 0");
                     bottomAppBar.setFabAlignmentMode(BottomAppBar.FAB_ALIGNMENT_MODE_END);
                 }
             }else {
                 if (position == 0) {
+                    Log.d(TAG, "transformPage: 0 pos 0");
                     bottomAppBar.setFabAlignmentMode(BottomAppBar.FAB_ALIGNMENT_MODE_CENTER);
                 }
             }

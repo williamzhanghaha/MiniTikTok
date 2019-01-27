@@ -12,6 +12,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottomAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="bottom"
+        android:backgroundTint="@color/colorPrimary"
+        android:elevation="24dp"
+        app:fabAlignmentMode="center"
+        app:fabCradleVerticalOffset="15dp"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -20,14 +30,6 @@
         android:elevation="24dp"
         app:layout_anchor="@id/bottomAppBar" />
 
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottomAppBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:backgroundTint="@color/colorPrimary"
-        android:elevation="24dp"
-        app:fabAlignmentMode="center"/>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

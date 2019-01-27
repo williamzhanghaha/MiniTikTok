@@ -146,7 +146,7 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
 
         //TODO 添加所有控件
 //        private TextView textView;
-        private StandardGSYVideoPlayer videoPlayer;
+        private FeedsListVideoPlayer videoPlayer;
         private View holderView;
 
         public View getHolderView() {
@@ -160,8 +160,9 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
             if (itemView == mFooterView) return;
 //            textView = itemView.findViewById(R.id.feed_url_view);
             videoPlayer = itemView.findViewById(R.id.item_video_player);
-            videoPlayer.getTitleTextView().setVisibility(View.GONE);
-            videoPlayer.getBackButton().setVisibility(View.GONE);
+//            videoPlayer.getTitleTextView().setVisibility(View.GONE);
+//            videoPlayer.getBackButton().setVisibility(View.GONE);
+            videoPlayer.setDismissControlTime(500);
             itemView.setOnClickListener(this);
         }
 

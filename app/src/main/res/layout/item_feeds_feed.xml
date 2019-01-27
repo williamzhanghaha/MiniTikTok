@@ -33,9 +33,8 @@
         <!--android:gravity="center"-->
         <!--android:text="Feed Url" />-->
 
-    <com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
+    <com.bdac.zhcyc.minititok.UI.FeedsListVideoPlayer
         android:id="@+id/item_video_player"
         android:layout_width="match_parent"
-        android:layout_height="425dp"></com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer>
-
+        android:layout_height="425dp" />
 </androidx.cardview.widget.CardView>
