@@ -3,8 +3,8 @@
     <color name="colorPrimary">#263238</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#546E7A</color>
-    <color name="colorSurfaceLight">#455A64</color>
-    <color name="colorPrimaryLight">#37474F</color>
+    <color name="colorSurfaceBackground">#9B9B9B</color>
+    <color name="colorCardBackground">#37474F</color>
     <color name="colorTextMain">#FFFFFF</color>
-    <color name="halfTrans">#80000000</color>
+    <color name="halfTrans">#80263238</color>
 </resources>
