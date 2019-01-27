@@ -24,11 +24,12 @@
             android:layout_height="wrap_content"
             android:text="from galley"/>
 
-        <Button
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btn_post"
-            android:layout_width="120dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="post it!"/>
+            android:src="@drawable/ic_baseline_camera"
+            />
     </LinearLayout>
 
 

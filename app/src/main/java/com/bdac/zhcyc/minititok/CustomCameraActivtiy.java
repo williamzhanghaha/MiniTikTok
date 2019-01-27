@@ -77,7 +77,13 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         btnPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if(isRecording){
+                    releaseMediaRecorder();
+                    isRecording = false;
+                }else if(!isRecording){
+                    prepareMediaRecorder();
+                    isRecording = true;
+                }
             }
         });
 
@@ -100,7 +106,6 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         mSurfaceHolder.addCallback(this);
-
     }
 
     @Override
@@ -218,9 +223,8 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     }
 
     private void prepareMediaRecorder(){
-        mCamera.unlock();
-
         mMediaRecorder = new MediaRecorder();
+        mCamera.unlock();
         mMediaRecorder.setCamera(mCamera);
 
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
@@ -238,6 +242,7 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
             mMediaRecorder.prepare();
             mMediaRecorder.start();
         }catch (Exception e){
+            releaseMediaRecorder();
             e.printStackTrace();
         }
     }
@@ -345,5 +350,4 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         }
         return optimalSize;
     }
-
 }
