@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bdac.zhcyc.minititok.Network.beans.Feed;
 import com.bdac.zhcyc.minititok.R;
@@ -16,12 +17,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class FeedsFragment extends Fragment implements FeedsAdapter.FeedListItemClickListener {
+public class FeedsFragment extends Fragment implements FeedsAdapter.FeedListItemClickListener, FeedsAdapter.FeedListRefreshedListener {
     public static final String TAG = "FeedsFragment";
 
     private RecyclerView recyclerView;
     private FeedsAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
+
+    private Toast toast;
 
     @Nullable
     @Override
@@ -38,14 +41,31 @@ public class FeedsFragment extends Fragment implements FeedsAdapter.FeedListItem
         adapter.setFooterView(LayoutInflater.from(getContext()).inflate(R.layout.footer_feeds, recyclerView, false));
 
         adapter.setFeedListItemClickListener(this);
+        adapter.setFeedListRefreshedListener(this);
         NetworkUtils.fetchFeed(recyclerView);
 
         return view;
+    }
+
+    public void refreshFeeds () {
+        Log.d(TAG, "refreshFeeds: In");
+        NetworkUtils.fetchFeed(recyclerView);
+        if (toast != null) toast.cancel();
+        toast = Toast.makeText(getContext(), getString(R.string.processing_refreshing), Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     @Override
     public void onFeedListItemClicked(int clickedItemIndex, Feed feed) {
         Log.d(TAG, "onFeedListItemClicked: Index: " + clickedItemIndex + " Feed:" + feed.getVideo_url());
         //TODO 点击feed
+    }
+
+    @Override
+    public void onFeedListItemRefreshed() {
+        if (toast != null) toast.cancel();
+        toast = Toast.makeText(getContext(), getString(R.string.processing_refreshed), Toast.LENGTH_SHORT);
+        toast.show();
+
     }
 }

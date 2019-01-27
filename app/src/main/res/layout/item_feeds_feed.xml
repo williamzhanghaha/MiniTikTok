@@ -25,12 +25,17 @@
     app:cardElevation="12dp"
     android:foreground="?attr/selectableItemBackground">
 
-    <TextView
-        android:id="@+id/feed_url_view"
+    <!--<TextView-->
+        <!--android:id="@+id/feed_url_view"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="425dp"-->
+        <!--android:background="@color/colorTextMain"-->
+        <!--android:gravity="center"-->
+        <!--android:text="Feed Url" />-->
+
+    <com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
+        android:id="@+id/item_video_player"
         android:layout_width="match_parent"
-        android:layout_height="425dp"
-        android:background="@color/colorTextMain"
-        android:gravity="center"
-        android:text="Feed Url" />
+        android:layout_height="425dp"></com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer>
 
 </androidx.cardview.widget.CardView>

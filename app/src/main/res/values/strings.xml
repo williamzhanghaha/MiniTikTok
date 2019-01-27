@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">MiniTiTok</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="processing_refreshing">Refreshing…</string>
+    <string name="processing_refreshed">Up to date!</string>
 </resources>

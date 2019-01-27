@@ -2,6 +2,7 @@ package com.bdac.zhcyc.minititok;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -18,27 +19,37 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.bdac.zhcyc.minititok.UI.FeedsFragment;
 import com.bdac.zhcyc.minititok.Utilities.DatabaseUtils;
 import com.bdac.zhcyc.minititok.Network.beans.Item;
+import com.bdac.zhcyc.minititok.Utilities.NetworkUtils;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
+import java.util.zip.Inflater;
 
 public class MainActivity extends FragmentActivity {
 
     private final static int REQUST_CODE_CAMERA_AUDIO_STORAGE = 101;
-    private final static String TAG = "Seb";
+    private final static String TAG = "MainActivity";
 
     private static final int NUM_PAGES = 2;
     private ViewPager mPager;
-    private PagerAdapter mPagerAdapter;
+    private ScreenSlidePagerAdapter mPagerAdapter;
 
     private FloatingActionButton fab;
     private BottomAppBar bottomAppBar;
+
+    private FeedsFragment feedsFragment = new FeedsFragment();
+    private Fragment meFragment = new FeedsFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +66,18 @@ public class MainActivity extends FragmentActivity {
             getWindow().setStatusBarColor(getResources().getColor(R.color.halfTrans));
         }
         bottomAppBar = findViewById(R.id.bottomAppBar);
+        bottomAppBar.replaceMenu(R.menu.bottomappbar_menu);
+        bottomAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.app_bar_refresh:
+                        refreshItems();
+                        break;
+                }
+                return true;
+            }
+        });
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +117,19 @@ public class MainActivity extends FragmentActivity {
         startActivity(new Intent(MainActivity.this,CustomCameraActivtiy.class));
     }
 
+    private void refreshItems () {
+        //TODO 刷新
+        switch (mPager.getCurrentItem()) {
+            case 1:
+                //feeds
+                feedsFragment.refreshFeeds();
+                break;
+            case 0:
+                //me
+                break;
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -115,7 +151,10 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return new FeedsFragment();
+            if (position == 1) {
+                return feedsFragment;
+            }
+            return meFragment;
         }
 
         @Override
