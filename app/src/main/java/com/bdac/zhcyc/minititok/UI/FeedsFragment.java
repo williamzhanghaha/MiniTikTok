@@ -14,7 +14,6 @@ import com.bdac.zhcyc.minititok.Utilities.NetworkUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class FeedsFragment extends Fragment implements FeedsAdapter.FeedListItemClickListener, FeedsAdapter.FeedListRefreshedListener {
@@ -22,7 +21,7 @@ public class FeedsFragment extends Fragment implements FeedsAdapter.FeedListItem
 
     private RecyclerView recyclerView;
     private FeedsAdapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
+    private SmoothScrollLayoutManager layoutManager;
 
     private Toast toast;
 
@@ -32,7 +31,7 @@ public class FeedsFragment extends Fragment implements FeedsAdapter.FeedListItem
         View view = inflater.inflate(R.layout.fragment_feeds, container, false);
         recyclerView = view.findViewById(R.id.rv_feeds);
         adapter = new FeedsAdapter();
-        layoutManager = new LinearLayoutManager(getContext());
+        layoutManager = new SmoothScrollLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new FeedsAdapter();
         recyclerView.setAdapter(adapter);
@@ -66,6 +65,6 @@ public class FeedsFragment extends Fragment implements FeedsAdapter.FeedListItem
         if (toast != null) toast.cancel();
         toast = Toast.makeText(getContext(), getString(R.string.processing_refreshed), Toast.LENGTH_SHORT);
         toast.show();
-
+        recyclerView.smoothScrollToPosition(0);
     }
 }

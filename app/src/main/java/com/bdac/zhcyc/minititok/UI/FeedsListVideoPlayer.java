@@ -25,13 +25,6 @@ public class FeedsListVideoPlayer extends StandardGSYVideoPlayer {
     }
 
     @Override
-    protected void init(Context context) {
-        super.init(context);
-        mProgressBar = null;
-        mBottomContainer = null;
-    }
-
-    @Override
     protected void touchSurfaceMoveFullLogic(float absDeltaX, float absDeltaY) {
         super.touchSurfaceMoveFullLogic(absDeltaX, absDeltaY);
         mChangePosition = false;

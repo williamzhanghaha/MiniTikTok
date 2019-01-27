@@ -162,7 +162,6 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
             videoPlayer = itemView.findViewById(R.id.item_video_player);
 //            videoPlayer.getTitleTextView().setVisibility(View.GONE);
 //            videoPlayer.getBackButton().setVisibility(View.GONE);
-            videoPlayer.setDismissControlTime(500);
             itemView.setOnClickListener(this);
         }
 
