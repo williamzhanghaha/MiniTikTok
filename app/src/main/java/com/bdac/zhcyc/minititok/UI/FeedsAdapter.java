@@ -4,10 +4,14 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bdac.zhcyc.minititok.Network.beans.Feed;
 import com.bdac.zhcyc.minititok.R;
+import com.bumptech.glide.Glide;
+import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +28,7 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
 
     private List<Feed> feeds = new ArrayList<>();
     private FeedListItemClickListener feedListItemClickListener;
+    private FeedListRefreshedListener feedListRefreshedListener;
     private View mHeaderView;
     private View mFooterView;
 
@@ -35,11 +40,16 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
         this.feedListItemClickListener = feedListItemClickListener;
     }
 
+    public void setFeedListRefreshedListener(FeedListRefreshedListener feedListRefreshedListener) {
+        this.feedListRefreshedListener = feedListRefreshedListener;
+    }
+
     public void refresh (List<Feed> feeds) {
         if (feeds != null) {
             this.feeds = feeds;
         }
         notifyDataSetChanged();
+        feedListRefreshedListener.onFeedListItemRefreshed();
     }
 
     public void setHeaderView(View headerView) {
@@ -113,7 +123,16 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
         final int realPosition = mHeaderView == null ? position : position - 1;;
         Feed feed = feeds.get(realPosition);
         //TODO 更改bind操作
-        holder.textView.setText(feed.getVideo_url());
+//        holder.textView.setText(feed.getVideo_url());
+        String imageUrl = feed.getImage_url();
+        String videoUrl = feed.getVideo_url();
+
+        ImageView imageView = new ImageView(holder.getHolderView().getContext());
+        Glide.with(imageView.getContext()).load(imageUrl).into(imageView);
+
+        holder.videoPlayer.setUp(videoUrl, true, "");
+        holder.videoPlayer.setThumbImageView(imageView);
+
     }
 
     @Override
@@ -126,13 +145,23 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
     public class FeedViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         //TODO 添加所有控件
-        private TextView textView;
+//        private TextView textView;
+        private StandardGSYVideoPlayer videoPlayer;
+        private View holderView;
+
+        public View getHolderView() {
+            return holderView;
+        }
 
         public FeedViewHolder(@NonNull View itemView) {
             super(itemView);
+            holderView = itemView;
             if(itemView == mHeaderView) return;
             if (itemView == mFooterView) return;
-            textView = itemView.findViewById(R.id.feed_url_view);
+//            textView = itemView.findViewById(R.id.feed_url_view);
+            videoPlayer = itemView.findViewById(R.id.item_video_player);
+            videoPlayer.getTitleTextView().setVisibility(View.GONE);
+            videoPlayer.getBackButton().setVisibility(View.GONE);
             itemView.setOnClickListener(this);
         }
 
@@ -152,5 +181,9 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
 
     public interface FeedListItemClickListener {
         void onFeedListItemClicked(int clickedItemIndex, Feed feed);
+    }
+
+    public interface FeedListRefreshedListener {
+        void onFeedListItemRefreshed ();
     }
 }
