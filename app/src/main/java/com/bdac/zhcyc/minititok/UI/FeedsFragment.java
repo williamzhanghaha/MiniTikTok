@@ -43,6 +43,11 @@ public class FeedsFragment extends Fragment implements FeedsAdapter.FeedListItem
         return view;
     }
 
+    public void refreshFeeds () {
+        Log.d(TAG, "refreshFeeds: In");
+        NetworkUtils.fetchFeed(recyclerView);
+    }
+
     @Override
     public void onFeedListItemClicked(int clickedItemIndex, Feed feed) {
         Log.d(TAG, "onFeedListItemClicked: Index: " + clickedItemIndex + " Feed:" + feed.getVideo_url());
