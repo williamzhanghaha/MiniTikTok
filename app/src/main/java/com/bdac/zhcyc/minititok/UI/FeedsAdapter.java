@@ -19,11 +19,13 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
 
     public static final int TYPE_HEADER = 0;
     public static final int TYPE_NORMAL = 1;
+    public static final int TYPE_FOOTER = 2;
 
 
     private List<Feed> feeds = new ArrayList<>();
     private FeedListItemClickListener feedListItemClickListener;
     private View mHeaderView;
+    private View mFooterView;
 
     public void setFeeds(List<Feed> feeds) {
         this.feeds = feeds;
@@ -45,21 +47,54 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
         notifyItemInserted(0);
     }
 
+    public void setFooterView(View footerView) {
+        mFooterView = footerView;
+        notifyDataSetChanged();
+    }
+
     public View getHeaderView() {
         return mHeaderView;
     }
 
+    public View getFooterView () {
+        return mFooterView;
+    }
+
     @Override
     public int getItemViewType(int position) {
-        if(mHeaderView == null) return TYPE_NORMAL;
-        if(position == 0) return TYPE_HEADER;
+//        if(mHeaderView == null) return TYPE_NORMAL;
+//        if(position == 0) return TYPE_HEADER;
+//        return TYPE_NORMAL;
+
+        int dataSize = feeds.size();
+        if (mHeaderView == null) {
+            if (position >= 0 && position < dataSize) {
+                return TYPE_NORMAL;
+            } else {
+                if (mFooterView != null) {
+                    return TYPE_FOOTER;
+                }
+            }
+        } else {
+            if (position == 0) {
+                return TYPE_HEADER;
+            } else if (position > 0 && position <= dataSize) {
+                return TYPE_NORMAL;
+            } else {
+                if (mFooterView != null) {
+                    return TYPE_FOOTER;
+                }
+            }
+        }
         return TYPE_NORMAL;
+
     }
 
     @NonNull
     @Override
     public FeedViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if(mHeaderView != null && viewType == TYPE_HEADER) return new FeedViewHolder(mHeaderView);
+        if (mFooterView != null && viewType == TYPE_FOOTER) return new FeedViewHolder(mFooterView);
         Context context = parent.getContext();
         int layoutIdForListItem = R.layout.item_feeds_feed;
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -74,6 +109,7 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
     @Override
     public void onBindViewHolder(@NonNull FeedViewHolder holder, int position) {
         if(getItemViewType(position) == TYPE_HEADER) return;
+        if (getItemViewType(position) == TYPE_FOOTER) return;
         final int realPosition = mHeaderView == null ? position : position - 1;;
         Feed feed = feeds.get(realPosition);
         //TODO 更改bind操作
@@ -82,7 +118,9 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
 
     @Override
     public int getItemCount() {
-        return mHeaderView == null ? feeds.size() : feeds.size() + 1;
+        int count =  mHeaderView == null ? feeds.size() : feeds.size() + 1;
+        count = mFooterView == null ? count : count + 1;
+        return count;
     }
 
     public class FeedViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -93,6 +131,7 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
         public FeedViewHolder(@NonNull View itemView) {
             super(itemView);
             if(itemView == mHeaderView) return;
+            if (itemView == mFooterView) return;
             textView = itemView.findViewById(R.id.feed_url_view);
             itemView.setOnClickListener(this);
         }
