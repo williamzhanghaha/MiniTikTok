@@ -1,5 +1,7 @@
 package com.bdac.zhcyc.minititok;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,16 +14,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.Button;
-import android.widget.ImageView;
-
 import com.bdac.zhcyc.minititok.Utilities.MediaFileUtils;
 import com.bdac.zhcyc.minititok.Utilities.NetworkUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -50,17 +48,18 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     private SurfaceHolder mSurfaceHolder;
 
     private FloatingActionButton btnPost;
+    private FloatingActionButton btnGalley;
+    private FloatingActionButton btnSwitch;
 
     private Camera mCamera;
     private MediaRecorder mMediaRecorder;
-
-    private int rotationDegree = 0;
 
     private boolean isRecording = false;
     private int mCameraStatus = Camera.CameraInfo.CAMERA_FACING_FRONT;
 
     private String shootImagePath = null;
     private String shootVideoPath = null;
+
     private Uri selectImageUri = null;
     private Uri selectVideoUri = null;
 
@@ -75,8 +74,12 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     private static final int CODE_SELECT_IMAGE = 101;
     private static final int CODE_SELECT_VIDEO = 102;
 
+    private static final float SCALE_NUM = 1.4f;
+
     private float INI_X;
     private float INI_Y;
+
+    private Uri woyebuzhidaoshiganshenmedeUri = null;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -86,6 +89,9 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         setContentView(R.layout.custom_camera_activity);
 
         btnPost = findViewById(R.id.btn_post);
+        btnGalley = findViewById(R.id.btn_gallery);
+        btnSwitch = findViewById(R.id.btn_switch);
+
         btnPost.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -98,20 +104,7 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         btnPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if(isRecording){
-//                    releaseMediaRecorder();
-//                    isRecording = false;
-//                }else if(!isRecording){
-//                    prepareMediaRecorder();
-//                    isRecording = true;
-//                }
-            }
-        });
 
-        btnPost.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                return true;
             }
         });
 
@@ -122,13 +115,20 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                 float x0,y0,x1,y1,dx,dy;
                 x0 = INI_X;
                 y0 = INI_Y;
+                x1 = INI_X;
+                y1 = INI_Y;
+
+                //TODO 变大
 
                 switch (event.getAction()){
                     case MotionEvent.ACTION_DOWN:{
                         x0 = event.getRawX();
                         y0 = event.getRawY();
-                        Log.d(TAG,y0+" y0");
+
+                        setBtnToScale(btnPost,SCALE_NUM);
                         btnPost.setColorFilter(Color.GRAY);
+
+                        prepareMediaRecorder();
                         break;
                     }
                     case MotionEvent.ACTION_MOVE:{
@@ -138,30 +138,54 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                         v.setX(x1 - v.getWidth() / 2.0f);
                         v.setY(y1 - v.getHeight() / 2.0f);
 
-                        dx = x1 - x0;
-                        dy = y1 - y0;
-                        x0 = x1;
-                        y0 = y1;
+//                        dx = x1 - x0;
+//                        dy = y1 - y0;
+//                        x0 = x1;
+//                        y0 = y1;
+//                        Log.d(TAG,dy+" dy");
 
-                        Log.d(TAG,dy+" dy");
-                        if(dy>0){
-                            zoomIn();
-                        }else{
-                            zoomOut();
-                        }
+//                        if(dy>0){
+//                            zoomIn();
+//                        }else{
+//                            zoomOut();
+//                        }
 
                         break;
                     }
                     case MotionEvent.ACTION_UP:{
-                        btnPost.setX(INI_X);
-                        btnPost.setY(INI_Y);
+                        setBtnToScale(btnPost,1);
+                        setBtnBack(btnPost);
+
                         btnPost.clearColorFilter();
+
+                        releaseMediaRecorder();
+                        //TODO 生产预览
+                        Uri imageUri = generateThumbnail(shootVideoPath);
+                        Uri videoUri = Uri.fromFile(new File(shootVideoPath));
+
+                        //TODO 更新个人主页的rv
+                        NetworkUtils.postVideo(imageUri,videoUri,CustomCameraActivtiy.this,null);
+
                         break;
                     }
                 }
                 return true;
             }
 
+        });
+
+        btnGalley.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chooseVideo();
+            }
+        });
+
+        btnSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                swithCamera();
+            }
         });
 
         mSurfaceView = findViewById(R.id.sv_camera);
@@ -171,21 +195,36 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         mSurfaceHolder.addCallback(this);
     }
 
+
     @Override
-    protected void onStop() {
-        super.onStop();
-        releaseMediaRecorder();
-        releaseCameraAndPreview();
+    protected void onPause() {
+        super.onPause();
+        stopRecord();
+    }
+
+    private void stopRecord () {
+        try {
+            mMediaRecorder.stop();
+            releaseMediaRecorder();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        isRecording = false;
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        mediaScanIntent.setData(woyebuzhidaoshiganshenmedeUri);
+        this.sendBroadcast(mediaScanIntent);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
+        Log.d(TAG,"created");
         mCamera = getmCamera(mCameraStatus);
         startPreview(surfaceHolder);
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) {
+        Log.d(TAG,"changed");
         if (surfaceHolder.getSurface() == null) {
             return;
         }
@@ -211,8 +250,35 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+        Log.d(TAG,"destroyed");
         releaseMediaRecorder();
         releaseCameraAndPreview();
+    }
+
+    private void setBtnToScale(FloatingActionButton btn,float scaleNum){
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(btn,"scaleX",scaleNum);
+        scaleX.setDuration(500);
+
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(btn,"scaleY",scaleNum);
+        scaleY.setDuration(500);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(scaleX);
+        animatorSet.playTogether(scaleY);
+        animatorSet.start();
+    }
+
+    private void setBtnBack(FloatingActionButton btn){
+        ObjectAnimator transX = ObjectAnimator.ofFloat(btn,"X",INI_X);
+        transX.setDuration(500);
+
+        ObjectAnimator transY = ObjectAnimator.ofFloat(btn,"Y",INI_Y);
+        transY.setDuration(500);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(transX);
+        animatorSet.playTogether(transY);
+        animatorSet.start();
     }
 
     /**
@@ -221,14 +287,18 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
      * @return
      */
 
-    private Bitmap generateThumbnail(Uri videoUri){
+    private Uri generateThumbnail(Uri videoUri){
         String videoPath = MediaFileUtils.convertUriToPath(this,videoUri);
+        Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(videoPath, MediaStore.Video.Thumbnails.MINI_KIND);
+        Uri imageUri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, null,null));
 
-        return ThumbnailUtils.createVideoThumbnail(videoPath, MediaStore.Video.Thumbnails.MINI_KIND);
+        return imageUri;
     }
 
-    private Bitmap generateThumbnail(String videoPath){
-        return ThumbnailUtils.createVideoThumbnail(videoPath, MediaStore.Video.Thumbnails.MINI_KIND);
+    private Uri generateThumbnail(String videoPath){
+        Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(videoPath, MediaStore.Video.Thumbnails.MINI_KIND);
+        Uri imageUri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, null,null));
+        return imageUri;
     }
 
     private void chooseImage(){
@@ -260,7 +330,8 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                 Log.d(TAG, selectVideoUri.toString());
             }
 
-            if(hasSelectedImage&&hasSelectedVideo){
+            if(hasSelectedVideo){
+                selectImageUri = generateThumbnail(selectVideoUri);
                 Log.d(TAG,"posting!");
                 NetworkUtils.postVideo(selectImageUri, selectVideoUri,CustomCameraActivtiy.this,null);
                 resetSelection();
@@ -279,10 +350,8 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         }
 
         Camera camera = Camera.open(CAMERA_TYPE);
-        rotationDegree = getCameraDisplayOrientation(CAMERA_TYPE);
-        camera.setDisplayOrientation(rotationDegree);
+        camera.setDisplayOrientation(getCameraDisplayOrientation(CAMERA_TYPE));
 
-        Log.d(TAG,rotationDegree+"");
 
         Camera.Parameters params = camera.getParameters();
         List<String> focusModes = params.getSupportedFocusModes();
@@ -292,7 +361,6 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
             mParams.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
             camera.setParameters(mParams);
         }
-
         return camera;
     }
 
@@ -392,12 +460,29 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
 
         mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
 
-        shootVideoPath = getOutputMediaFile(MEDIA_TYPE_VIDEO).toString();
+        File shootVideo = getOutputMediaFile(MEDIA_TYPE_VIDEO);
+        woyebuzhidaoshiganshenmedeUri = Uri.fromFile(shootVideo);
+        shootVideoPath = shootVideo.toString();
 
         mMediaRecorder.setOutputFile(shootVideoPath);
 
         mMediaRecorder.setPreviewDisplay(mSurfaceHolder.getSurface());
-        mMediaRecorder.setOrientationHint(rotationDegree);
+
+        int mRotationDegree;
+
+        switch (mCameraStatus) {
+            case Camera.CameraInfo.CAMERA_FACING_BACK:
+                mRotationDegree = 90;
+                break;
+            case Camera.CameraInfo.CAMERA_FACING_FRONT:
+                mRotationDegree = 270;
+                break;
+            default:
+                mRotationDegree = 0;
+                break;
+        }
+
+        mMediaRecorder.setOrientationHint(mRotationDegree);
 
         try{
             mMediaRecorder.prepare();

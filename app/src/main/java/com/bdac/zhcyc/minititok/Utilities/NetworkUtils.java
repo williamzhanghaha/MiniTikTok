@@ -70,11 +70,9 @@ public class NetworkUtils {
                 Log.d(TAG,"post response!");
 
                 item = response.body().getItem();
-                Log.d(TAG,item.getStudent_id());
 
                 DatabaseUtils.saveItemToDatabase(item);
-
-                Toast.makeText(context,"post successfully!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Post successfully!",Toast.LENGTH_SHORT).show();
 
                 //TODO 刷新个人主页的RecyclerView
 
