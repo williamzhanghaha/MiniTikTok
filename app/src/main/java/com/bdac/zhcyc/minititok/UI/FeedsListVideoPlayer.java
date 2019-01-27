@@ -35,7 +35,6 @@ public class FeedsListVideoPlayer extends StandardGSYVideoPlayer {
         mBrightness = false;
     }
 
-
     @Override
     protected void setViewShowState(View view, int visibility) {
         if (view == null) return;

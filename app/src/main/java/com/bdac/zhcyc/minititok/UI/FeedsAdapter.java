@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.bdac.zhcyc.minititok.Network.beans.Feed;
 import com.bdac.zhcyc.minititok.R;
 import com.bumptech.glide.Glide;
+import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 
 import java.util.ArrayList;
@@ -129,6 +130,7 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
 
         ImageView imageView = new ImageView(holder.getHolderView().getContext());
         Glide.with(imageView.getContext()).load(imageUrl).into(imageView);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         holder.videoPlayer.setUp(videoUrl, true, "");
         holder.videoPlayer.setThumbImageView(imageView);
@@ -164,6 +166,7 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
 //            videoPlayer.getBackButton().setVisibility(View.GONE);
             videoPlayer.setThumbPlay(true);
             videoPlayer.setLooping(true);
+            //GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_FULL);
             itemView.setOnClickListener(this);
         }
 

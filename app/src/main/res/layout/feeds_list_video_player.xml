@@ -37,8 +37,10 @@
         android:id="@+id/loading"
         android:layout_width="28dp"
         android:layout_height="28dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="30dp"
         android:visibility="invisible" />
 
     <moe.codeest.enviews.ENPlayView
