@@ -1,19 +1,23 @@
 package com.bdac.zhcyc.minititok;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
-import com.bdac.zhcyc.minititok.Utilities.DatabaseUtils;
+import com.bdac.zhcyc.minititok.Utilities.MediaFileUtils;
 import com.bdac.zhcyc.minititok.Utilities.NetworkUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -51,10 +55,10 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     private boolean isRecording = false;
     private int mCameraStatus = Camera.CameraInfo.CAMERA_FACING_FRONT;
 
-    private String imagePath = null;
-    private String videoPath = null;
-    private Uri imageUri = null;
-    private Uri videoUri = null;
+    private String shootImagePath = null;
+    private String shootVideoPath = null;
+    private Uri selectImageUri = null;
+    private Uri selectVideoUri = null;
 
     private boolean hasSelectedImage = false;
     private boolean hasSelectedVideo = false;
@@ -67,7 +71,6 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     private static final int CODE_SELECT_IMAGE = 101;
     private static final int CODE_SELECT_VIDEO = 102;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //TODO 这个activity_layout就先这样写吧 最后再改
@@ -77,11 +80,11 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         btnPost = findViewById(R.id.btn_post);
         btnGalley = findViewById(R.id.btn_gallery);
 
-        //TODO 照相 录像
         btnPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(isRecording){
+
                     releaseMediaRecorder();
                     isRecording = false;
                 }else if(!isRecording){
@@ -102,7 +105,6 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
             @Override
             public void onClick(View v) {
                 chooseVideo();
-                chooseImage();
             }
         });
 
@@ -150,7 +152,21 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         releaseCameraAndPreview();
     }
 
-    //TODO 自动生成封面图
+    /**
+     * 重载了方法
+     * @param videoUri 参数可以是绝对路径或者uri
+     * @return
+     */
+
+    private Bitmap generateThumbnail(Uri videoUri){
+        String videoPath = MediaFileUtils.convertUriToPath(this,videoUri);
+
+        return ThumbnailUtils.createVideoThumbnail(videoPath, MediaStore.Video.Thumbnails.MINI_KIND);
+    }
+
+    private Bitmap generateThumbnail(String videoPath){
+        return ThumbnailUtils.createVideoThumbnail(videoPath, MediaStore.Video.Thumbnails.MINI_KIND);
+    }
 
     private void chooseImage(){
         Intent intent = new Intent();
@@ -172,18 +188,18 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
 
         if(resultCode == RESULT_OK && data!=null){
             if(requestCode == CODE_SELECT_IMAGE){
-                imageUri = data.getData();
+                selectImageUri = data.getData();
                 hasSelectedImage = true;
-                Log.d(TAG,imageUri.toString());
+//                Log.d(TAG, selectImageUri.toString());
             }else if(requestCode == CODE_SELECT_VIDEO){
-                videoUri = data.getData();
+                selectVideoUri = data.getData();
                 hasSelectedVideo = true;
-                Log.d(TAG,videoUri.toString());
+                Log.d(TAG, selectVideoUri.toString());
             }
 
             if(hasSelectedImage&&hasSelectedVideo){
                 Log.d(TAG,"posting!");
-                NetworkUtils.postVideo(imageUri,videoUri,CustomCameraActivtiy.this,null);
+                NetworkUtils.postVideo(selectImageUri, selectVideoUri,CustomCameraActivtiy.this,null);
                 resetSelection();
             }
         }
@@ -232,10 +248,28 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         mCamera=null;
     }
 
-    //TODO 加zoom
-
     private void zoomIn(){
+        if(mCamera==null){
+            return;
+        }
 
+        Camera.Parameters parameters = mCamera.getParameters();
+
+        if(!parameters.isZoomSupported()){
+            return;
+        }
+
+        List<Integer> zoomlist = parameters.getZoomRatios();
+        int nowZoomValue = parameters.getZoom();
+        int nextZoomValue = nowZoomValue+10;
+
+        if(nextZoomValue<zoomlist.size()){
+            parameters.setZoom(nowZoomValue);
+            mCamera.setParameters(parameters);
+        }else{
+            parameters.setZoom(0);
+            mCamera.setParameters(parameters);
+        }
     }
 
     private void swithCamera(){
@@ -249,7 +283,13 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         startPreview(mSurfaceHolder);
     }
 
+    private void shotPhoto(){
+        mCamera.takePicture(null,null, mPicture);
+    }
+
     private void prepareMediaRecorder(){
+        //TODO setInvisible button
+
         mMediaRecorder = new MediaRecorder();
         mCamera.unlock();
         mMediaRecorder.setCamera(mCamera);
@@ -259,8 +299,9 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
 
         mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
 
-        videoPath = getOutputMediaFile(MEDIA_TYPE_VIDEO).toString();
-        mMediaRecorder.setOutputFile(videoPath);
+        shootVideoPath = getOutputMediaFile(MEDIA_TYPE_VIDEO).toString();
+
+        mMediaRecorder.setOutputFile(shootVideoPath);
 
         mMediaRecorder.setPreviewDisplay(mSurfaceHolder.getSurface());
         mMediaRecorder.setOrientationHint(rotationDegree);
@@ -284,8 +325,11 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         mMediaRecorder = null;
         mCamera.lock();
 
+        //TODO 生成封面图后post
+        //TODO 需不需要生成一个activit预览呢
+
         try{
-            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(videoPath))));
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(shootVideoPath))));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -293,6 +337,8 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
 
     private Camera.PictureCallback mPicture = (data, camera) -> {
         File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+        shootImagePath = pictureFile.toString();
+
         if (pictureFile == null) {
             return;
         }
@@ -310,7 +356,6 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         }
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(pictureFile)));
     };
-
 
     private int getCameraDisplayOrientation(int cameraId) {
         android.hardware.Camera.CameraInfo info =

@@ -3,6 +3,7 @@ package com.bdac.zhcyc.minititok.Utilities;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.bdac.zhcyc.minititok.Network.IMiniTikTokService;
 import com.bdac.zhcyc.minititok.Network.beans.Feed;
@@ -72,6 +73,8 @@ public class NetworkUtils {
                 Log.d(TAG,item.getStudent_id());
 
                 DatabaseUtils.saveItemToDatabase(item);
+
+                Toast.makeText(context,"post successfully!",Toast.LENGTH_SHORT).show();
 
                 //TODO 刷新个人主页的RecyclerView
 
