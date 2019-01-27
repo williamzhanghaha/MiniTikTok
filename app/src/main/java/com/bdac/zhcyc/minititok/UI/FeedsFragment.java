@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.bdac.zhcyc.minititok.Network.beans.Feed;
 import com.bdac.zhcyc.minititok.R;
@@ -36,6 +35,7 @@ public class FeedsFragment extends Fragment implements FeedsAdapter.FeedListItem
         recyclerView.setAdapter(adapter);
 
         adapter.setHeaderView(LayoutInflater.from(getContext()).inflate(R.layout.header_feeds, recyclerView, false));
+        adapter.setFooterView(LayoutInflater.from(getContext()).inflate(R.layout.footer_feeds, recyclerView, false));
 
         adapter.setFeedListItemClickListener(this);
         NetworkUtils.fetchFeed(recyclerView);
