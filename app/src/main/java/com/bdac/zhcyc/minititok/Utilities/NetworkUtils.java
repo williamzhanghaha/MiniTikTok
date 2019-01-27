@@ -46,7 +46,7 @@ public class NetworkUtils {
     private static final String BASE_URL = "http://10.108.10.39:8080/";
     private static final String STUDENT_ID = "1120172129";
     private static final String USER_NAME = "Cyc and zhc";
-    private static final String IMG_NAME = "cover_image";
+    private static final String IMAGE_NAME = "cover_image";
     private static final String VIDEO_NAME = "video";
 
     private static List<Feed> feeds = null;
@@ -62,7 +62,7 @@ public class NetworkUtils {
         retrofit.create(IMiniTikTokService.class).createVideo(
                 STUDENT_ID,
                 USER_NAME,
-                getMultipartFromUri(IMG_NAME,imageUrl,context),
+                getMultipartFromUri(IMAGE_NAME,imageUrl,context),
                 getMultipartFromUri(VIDEO_NAME,videoUrl,context)
         ).enqueue(new Callback<PostVideoResponse>(){
             @Override
@@ -101,8 +101,6 @@ public class NetworkUtils {
                     public void onResponse(@NonNull Call<FeedResponse> call,@NonNull Response<FeedResponse> response) {
                         Log.d(TAG, "get response!");
                         feeds = response.body().getFeeds();
-
-                        //TODO 更新Feed流(主页)的List<Feed>
 
                         if (rv.getAdapter() instanceof FeedsAdapter) {
                             FeedsAdapter feedsAdapter = (FeedsAdapter)rv.getAdapter();

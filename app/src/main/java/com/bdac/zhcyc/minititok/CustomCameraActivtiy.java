@@ -1,7 +1,9 @@
 package com.bdac.zhcyc.minititok;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
@@ -10,10 +12,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -45,7 +50,6 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     private SurfaceHolder mSurfaceHolder;
 
     private FloatingActionButton btnPost;
-    private Button btnGalley;
 
     private Camera mCamera;
     private MediaRecorder mMediaRecorder;
@@ -71,6 +75,10 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     private static final int CODE_SELECT_IMAGE = 101;
     private static final int CODE_SELECT_VIDEO = 102;
 
+    private float INI_X;
+    private float INI_Y;
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //TODO 这个activity_layout就先这样写吧 最后再改
@@ -78,19 +86,25 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         setContentView(R.layout.custom_camera_activity);
 
         btnPost = findViewById(R.id.btn_post);
-        btnGalley = findViewById(R.id.btn_gallery);
+        btnPost.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                INI_X = btnPost.getX();
+                INI_Y = btnPost.getY();
+                btnPost.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
 
         btnPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isRecording){
-
-                    releaseMediaRecorder();
-                    isRecording = false;
-                }else if(!isRecording){
-                    prepareMediaRecorder();
-                    isRecording = true;
-                }
+//                if(isRecording){
+//                    releaseMediaRecorder();
+//                    isRecording = false;
+//                }else if(!isRecording){
+//                    prepareMediaRecorder();
+//                    isRecording = true;
+//                }
             }
         });
 
@@ -101,11 +115,53 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
             }
         });
 
-        btnGalley.setOnClickListener(new View.OnClickListener() {
+        btnPost.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                chooseVideo();
+            public boolean onTouch(View v, MotionEvent event) {
+
+                float x0,y0,x1,y1,dx,dy;
+                x0 = INI_X;
+                y0 = INI_Y;
+
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:{
+                        x0 = event.getRawX();
+                        y0 = event.getRawY();
+                        Log.d(TAG,y0+" y0");
+                        btnPost.setColorFilter(Color.GRAY);
+                        break;
+                    }
+                    case MotionEvent.ACTION_MOVE:{
+                        x1 = event.getRawX();
+                        y1 = event.getRawY();
+
+                        v.setX(x1 - v.getWidth() / 2.0f);
+                        v.setY(y1 - v.getHeight() / 2.0f);
+
+                        dx = x1 - x0;
+                        dy = y1 - y0;
+                        x0 = x1;
+                        y0 = y1;
+
+                        Log.d(TAG,dy+" dy");
+                        if(dy>0){
+                            zoomIn();
+                        }else{
+                            zoomOut();
+                        }
+
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP:{
+                        btnPost.setX(INI_X);
+                        btnPost.setY(INI_Y);
+                        btnPost.clearColorFilter();
+                        break;
+                    }
+                }
+                return true;
             }
+
         });
 
         mSurfaceView = findViewById(R.id.sv_camera);
@@ -113,6 +169,13 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         mSurfaceHolder.addCallback(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        releaseMediaRecorder();
+        releaseCameraAndPreview();
     }
 
     @Override
@@ -243,13 +306,16 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     }
 
     private void releaseCameraAndPreview(){
+        if(mCamera == null){
+            return;
+        }
         mCamera.stopPreview();
         mCamera.release();
         mCamera=null;
     }
 
     private void zoomIn(){
-        if(mCamera==null){
+        if(mCamera == null){
             return;
         }
 
@@ -272,6 +338,32 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         }
     }
 
+    private void zoomOut(){
+        if(mCamera == null){
+            return;
+        }
+
+        Camera.Parameters parameters = mCamera.getParameters();
+
+        if(!parameters.isZoomSupported()){
+            return;
+        }
+
+        List<Integer> zoomlist = parameters.getZoomRatios();
+        int nowZoomValue = parameters.getZoom();
+        int nextZoomValue = nowZoomValue-10;
+
+        if(nextZoomValue>=0){
+            parameters.setZoom(nowZoomValue);
+            mCamera.setParameters(parameters);
+        }else{
+            parameters.setZoom(zoomlist.size()-1);
+            mCamera.setParameters(parameters);
+        }
+
+
+    }
+
     private void swithCamera(){
         releaseCameraAndPreview();
         if(mCameraStatus == Camera.CameraInfo.CAMERA_FACING_FRONT){
@@ -289,6 +381,7 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
 
     private void prepareMediaRecorder(){
         //TODO setInvisible button
+//        btnPost.setVisibility(View.INVISIBLE);
 
         mMediaRecorder = new MediaRecorder();
         mCamera.unlock();
