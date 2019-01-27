@@ -20,7 +20,8 @@
         android:backgroundTint="@color/colorPrimary"
         android:elevation="24dp"
         app:fabAlignmentMode="center"
-        app:hideOnScroll="true"/>
+        app:hideOnScroll="true"
+        app:layout_scrollFlags="scroll|enterAlways" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
