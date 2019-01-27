@@ -101,13 +101,6 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
             }
         });
 
-        btnPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
         btnPost.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -158,15 +151,20 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
 
                         btnPost.clearColorFilter();
 
-                        releaseMediaRecorder();
-                        //TODO 生产预览
-                        Uri imageUri = generateThumbnail(shootVideoPath);
-                        Uri videoUri = Uri.fromFile(new File(shootVideoPath));
+                        try{
+                            releaseMediaRecorder();
+                            //TODO 生产预览
+                            Uri imageUri = generateThumbnail(shootVideoPath);
+                            Uri videoUri = Uri.fromFile(new File(shootVideoPath));
 
-                        //TODO 更新个人主页的rv
-                        NetworkUtils.postVideo(imageUri,videoUri,CustomCameraActivtiy.this,null);
+                            //TODO 更新个人主页的rv
+                            NetworkUtils.postVideo(imageUri,videoUri,CustomCameraActivtiy.this,null);
 
-                        break;
+                            break;
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
                     }
                 }
                 return true;
