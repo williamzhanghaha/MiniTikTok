@@ -75,7 +75,7 @@ public class MainActivity extends FragmentActivity {
                             },
                             REQUST_CODE_CAMERA_AUDIO_STORAGE);
                 }else{
-                    startActivity(new Intent(MainActivity.this,CustomCameraActivtiy.class));
+                    startCamera();
                 }
             }
         });
@@ -85,6 +85,10 @@ public class MainActivity extends FragmentActivity {
         mPager.setAdapter(mPagerAdapter);
         mPager.setCurrentItem(1);
         mPager.setPageTransformer(true, new PageTransformer());
+    }
+
+    private void startCamera () {
+        startActivity(new Intent(MainActivity.this,CustomCameraActivtiy.class));
     }
 
     @Override
@@ -138,6 +142,18 @@ public class MainActivity extends FragmentActivity {
 
         if (permissions.length == 0 || grantResults.length == 0) {
             return;
+        }
+
+        if (ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                ||
+                ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                ||
+                ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+        ) {
+            startCamera();
         }
 
         switch (requestCode) {
