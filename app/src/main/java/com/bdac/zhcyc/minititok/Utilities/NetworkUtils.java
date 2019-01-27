@@ -14,6 +14,7 @@ import com.bdac.zhcyc.minititok.UI.FeedsAdapter;
 import java.io.File;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -44,13 +45,14 @@ public class NetworkUtils {
     private static final String BASE_URL = "http://10.108.10.39:8080/";
     private static final String STUDENT_ID = "1120172129";
     private static final String USER_NAME = "Cyc and zhc";
-    private static final String IMG_NAME = "image";
+    private static final String IMG_NAME = "cover_image";
     private static final String VIDEO_NAME = "video";
 
-    private static List<Feed>  feeds = null;
-    private static List<Item> items = null;
+    private static List<Feed> feeds = null;
+    private static Item item =null;
 
-    public static void postVideo(Uri imgUrl, Uri videoUrl, Context context, final RecyclerView rv) {
+    public static void postVideo(Uri imageUrl, Uri videoUrl, Context context, final RecyclerView rv) {
+        Log.d(TAG,imageUrl.toString());
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -59,15 +61,16 @@ public class NetworkUtils {
         retrofit.create(IMiniTikTokService.class).createVideo(
                 STUDENT_ID,
                 USER_NAME,
-                getMultipartFromUri(IMG_NAME,imgUrl,context),
+                getMultipartFromUri(IMG_NAME,imageUrl,context),
                 getMultipartFromUri(VIDEO_NAME,videoUrl,context)
         ).enqueue(new Callback<PostVideoResponse>(){
             @Override
-            public void onResponse(Call<PostVideoResponse> call, Response<PostVideoResponse> response){
+            public void onResponse(@NonNull Call<PostVideoResponse> call, @NonNull Response<PostVideoResponse> response){
                 Log.d(TAG,"post response!");
-                items = response.body().getItems();
 
-                Item item = items.get(0);
+                item = response.body().getItem();
+                Log.d(TAG,item.getStudent_id());
+
                 DatabaseUtils.saveItemToDatabase(item);
 
                 //TODO 刷新个人主页的RecyclerView
@@ -76,7 +79,7 @@ public class NetworkUtils {
             }
 
             @Override
-            public void onFailure(Call<PostVideoResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<PostVideoResponse> call,@NonNull Throwable t) {
                 Log.d(TAG,"post failed!");
             }
         });
@@ -92,7 +95,7 @@ public class NetworkUtils {
         retrofit.create(IMiniTikTokService.class).feedResponse()
                 .enqueue(new Callback<FeedResponse>() {
                     @Override
-                    public void onResponse(Call<FeedResponse> call, Response<FeedResponse> response) {
+                    public void onResponse(@NonNull Call<FeedResponse> call,@NonNull Response<FeedResponse> response) {
                         Log.d(TAG, "get response!");
                         feeds = response.body().getFeeds();
 
@@ -105,7 +108,7 @@ public class NetworkUtils {
 
                     }
                     @Override
-                    public void onFailure(Call<FeedResponse> call, Throwable t) {
+                    public void onFailure(@NonNull Call<FeedResponse> call,@NonNull Throwable t) {
                         Log.d(TAG,t.getMessage());
                     }
                 });

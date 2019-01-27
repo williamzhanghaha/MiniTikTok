@@ -1,7 +1,6 @@
 package com.bdac.zhcyc.minititok;
 
 import android.content.Intent;
-import android.drm.DrmStore;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
@@ -12,9 +11,11 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
+
+import com.bdac.zhcyc.minititok.Utilities.DatabaseUtils;
+import com.bdac.zhcyc.minititok.Utilities.NetworkUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,7 +40,7 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     private SurfaceView mSurfaceView;
     private SurfaceHolder mSurfaceHolder;
 
-    private Button btnPost;
+    private FloatingActionButton btnPost;
     private Button btnGalley;
 
     private Camera mCamera;
@@ -48,12 +49,15 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     private int rotationDegree = 0;
 
     private boolean isRecording = false;
-    private boolean isFrontCamera = false;
+    private int mCameraStatus = Camera.CameraInfo.CAMERA_FACING_FRONT;
 
     private String imagePath = null;
     private String videoPath = null;
     private Uri imageUri = null;
     private Uri videoUri = null;
+
+    private boolean hasSelectedImage = false;
+    private boolean hasSelectedVideo = false;
 
     private static final int DEGREE_90 = 90;
     private static final int DEGREE_180 = 180;
@@ -97,7 +101,8 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         btnGalley.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                chooseVideo();
+                chooseImage();
             }
         });
 
@@ -110,7 +115,7 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        mCamera = getmCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
+        mCamera = getmCamera(mCameraStatus);
         startPreview(surfaceHolder);
     }
 
@@ -168,10 +173,25 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         if(resultCode == RESULT_OK && data!=null){
             if(requestCode == CODE_SELECT_IMAGE){
                 imageUri = data.getData();
+                hasSelectedImage = true;
+                Log.d(TAG,imageUri.toString());
             }else if(requestCode == CODE_SELECT_VIDEO){
                 videoUri = data.getData();
+                hasSelectedVideo = true;
+                Log.d(TAG,videoUri.toString());
+            }
+
+            if(hasSelectedImage&&hasSelectedVideo){
+                Log.d(TAG,"posting!");
+                NetworkUtils.postVideo(imageUri,videoUri,CustomCameraActivtiy.this,null);
+                resetSelection();
             }
         }
+    }
+
+    private void resetSelection(){
+        hasSelectedImage = false;
+        hasSelectedVideo = false;
     }
 
     private Camera getmCamera(final int CAMERA_TYPE){
@@ -212,14 +232,21 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         mCamera=null;
     }
 
-    //TODO 加zoom，加前后镜头反转
+    //TODO 加zoom
 
     private void zoomIn(){
 
     }
 
     private void swithCamera(){
-
+        releaseCameraAndPreview();
+        if(mCameraStatus == Camera.CameraInfo.CAMERA_FACING_FRONT){
+            mCameraStatus = Camera.CameraInfo.CAMERA_FACING_BACK;
+        }else if(mCameraStatus == Camera.CameraInfo.CAMERA_FACING_BACK){
+            mCameraStatus = Camera.CameraInfo.CAMERA_FACING_FRONT;
+        }
+        mCamera = getmCamera(mCameraStatus);
+        startPreview(mSurfaceHolder);
     }
 
     private void prepareMediaRecorder(){

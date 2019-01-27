@@ -14,13 +14,13 @@ public class PostVideoResponse {
     boolean isSuccess;
 
     @SerializedName("item")
-    List<Item> items;
+    Item item;
 
     public boolean isSuccess() {
         return isSuccess;
     }
 
-    public List<Item> getItems() {
-        return items;
+    public Item getItem() {
+        return item;
     }
 }
