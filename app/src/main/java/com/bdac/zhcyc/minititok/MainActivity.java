@@ -36,7 +36,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.List;
 import java.util.zip.Inflater;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
 
     private final static int REQUST_CODE_CAMERA_AUDIO_STORAGE = 101;
     private final static String TAG = "MainActivity";
@@ -66,18 +66,19 @@ public class MainActivity extends FragmentActivity {
 //            getWindow().setStatusBarColor(getResources().getColor(R.color.halfTrans));
 //        }
         bottomAppBar = findViewById(R.id.bottomAppBar);
-        bottomAppBar.replaceMenu(R.menu.bottomappbar_menu);
-        bottomAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.app_bar_refresh:
-                        refreshItems();
-                        break;
-                }
-                return true;
-            }
-        });
+        setSupportActionBar(bottomAppBar);
+//        bottomAppBar.replaceMenu(R.menu.bottomappbar_menu);
+//        bottomAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case R.id.app_bar_refresh:
+//                        refreshItems();
+//                        break;
+//                }
+//                return true;
+//            }
+//        });
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,6 +112,22 @@ public class MainActivity extends FragmentActivity {
         mPager.setAdapter(mPagerAdapter);
         mPager.setCurrentItem(1);
         mPager.setPageTransformer(true, new PageTransformer());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.bottomappbar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.app_bar_refresh:
+                refreshItems();
+                break;
+        }
+        return true;
     }
 
     private void startCamera () {
