@@ -58,13 +58,13 @@ public class MainActivity extends FragmentActivity {
 
         DatabaseUtils.dbInit(this);
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            View decorView = getWindow().getDecorView();
-            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-            decorView.setSystemUiVisibility(option);
-            getWindow().setStatusBarColor(getResources().getColor(R.color.halfTrans));
-        }
+//        if (Build.VERSION.SDK_INT >= 21) {
+//            View decorView = getWindow().getDecorView();
+//            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+//            decorView.setSystemUiVisibility(option);
+//            getWindow().setStatusBarColor(getResources().getColor(R.color.halfTrans));
+//        }
         bottomAppBar = findViewById(R.id.bottomAppBar);
         bottomAppBar.replaceMenu(R.menu.bottomappbar_menu);
         bottomAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
