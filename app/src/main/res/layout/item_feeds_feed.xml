@@ -13,25 +13,26 @@
 <!--</LinearLayout>-->
 
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/feeds_card_view"
     android:layout_width="match_parent"
     android:layout_height="400dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
     android:layout_marginTop="16dp"
+    android:layout_marginRight="16dp"
     android:layout_marginBottom="16dp"
+    android:foreground="?attr/selectableItemBackground"
     app:cardBackgroundColor="@color/colorCardBackground"
     app:cardCornerRadius="12dp"
-    app:cardElevation="12dp"
-    android:foreground="?attr/selectableItemBackground">
+    app:cardElevation="12dp">
 
     <!--<TextView-->
-        <!--android:id="@+id/feed_url_view"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="425dp"-->
-        <!--android:background="@color/colorTextMain"-->
-        <!--android:gravity="center"-->
-        <!--android:text="Feed Url" />-->
+    <!--android:id="@+id/feed_url_view"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="425dp"-->
+    <!--android:background="@color/colorTextMain"-->
+    <!--android:gravity="center"-->
+    <!--android:text="Feed Url" />-->
 
     <TextView
         android:id="@+id/textView_name"

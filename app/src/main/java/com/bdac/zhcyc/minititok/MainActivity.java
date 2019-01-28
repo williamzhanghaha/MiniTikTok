@@ -3,6 +3,7 @@ package com.bdac.zhcyc.minititok;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -18,12 +19,16 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.bdac.zhcyc.minititok.UI.FeedsFragment;
@@ -46,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
     private ScreenSlidePagerAdapter mPagerAdapter;
 
     private FloatingActionButton fab;
-    private BottomAppBar bottomAppBar;
 
     private FeedsFragment feedsFragment = new FeedsFragment();
     private Fragment meFragment = new FeedsFragment();
@@ -65,20 +69,6 @@ public class MainActivity extends AppCompatActivity {
 //            decorView.setSystemUiVisibility(option);
 //            getWindow().setStatusBarColor(getResources().getColor(R.color.halfTrans));
 //        }
-        bottomAppBar = findViewById(R.id.bottomAppBar);
-        setSupportActionBar(bottomAppBar);
-//        bottomAppBar.replaceMenu(R.menu.bottomappbar_menu);
-//        bottomAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                switch (item.getItemId()) {
-//                    case R.id.app_bar_refresh:
-//                        refreshItems();
-//                        break;
-//                }
-//                return true;
-//            }
-//        });
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,12 +177,20 @@ public class MainActivity extends AppCompatActivity {
             if (page == mPager.getChildAt(1)) {
                 if (position == 0) {
                     Log.d(TAG, "transformPage: 1 pos 0");
-                    bottomAppBar.setFabAlignmentMode(BottomAppBar.FAB_ALIGNMENT_MODE_END);
+                    //bottomAppBar.setFabAlignmentMode(BottomAppBar.FAB_ALIGNMENT_MODE_END);
+                    TransitionManager.beginDelayedTransition((ViewGroup) fab.getParent());
+                    CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+                    layoutParams.gravity = Gravity.BOTTOM | Gravity.RIGHT;
+                    fab.setLayoutParams(layoutParams);
                 }
             }else {
                 if (position == 0) {
                     Log.d(TAG, "transformPage: 0 pos 0");
-                    bottomAppBar.setFabAlignmentMode(BottomAppBar.FAB_ALIGNMENT_MODE_CENTER);
+                    //bottomAppBar.setFabAlignmentMode(BottomAppBar.FAB_ALIGNMENT_MODE_CENTER);
+                    TransitionManager.beginDelayedTransition((ViewGroup) fab.getParent());
+                    CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+                    layoutParams.gravity = Gravity.BOTTOM | Gravity.CENTER;
+                    fab.setLayoutParams(layoutParams);
                 }
             }
         }
