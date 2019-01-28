@@ -66,17 +66,13 @@ public class NetworkUtils {
                 getMultipartFromUri(VIDEO_NAME,videoUrl,context)
         ).enqueue(new Callback<PostVideoResponse>(){
             @Override
-            public void onResponse(@NonNull Call<PostVideoResponse> call, @NonNull Response<PostVideoResponse> response){
-                Log.d(TAG,"post response!");
+            public void onResponse(@NonNull Call<PostVideoResponse> call, @NonNull Response<PostVideoResponse> response) {
+                Log.d(TAG, "post response!");
 
                 item = response.body().getItem();
 
                 DatabaseUtils.saveItemToDatabase(item);
-                Toast.makeText(context,"Post successfully!",Toast.LENGTH_SHORT).show();
-
-                //TODO 刷新个人主页的RecyclerView
-
-                //TODO 更新个人主页的List<Item>
+                Toast.makeText(context, "Post successfully!", Toast.LENGTH_SHORT).show();
             }
 
             @Override

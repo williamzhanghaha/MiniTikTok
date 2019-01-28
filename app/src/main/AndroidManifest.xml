@@ -27,7 +27,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CustomCameraActivtiy">
+        <activity android:name=".CustomCameraActivtiy"
+            android:hardwareAccelerated="true">
+        </activity>
+        <activity android:name=".PostingActivity">
 
         </activity>
     </application>
