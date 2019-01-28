@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#263238</color>
-    <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#546E7A</color>
-    <color name="colorSurfaceBackground">#9B9B9B</color>
-    <color name="colorCardBackground">#37474F</color>
+    <color name="colorPrimary">#303F9F</color>
+    <color name="colorPrimaryDark">#1A237E</color>
+    <color name="colorAccent">#000000</color>
+    <color name="colorSurfaceBackground">#FFFFFF</color>
+    <color name="colorCardBackground">#FFFFFF</color>
     <color name="colorTextMain">#FFFFFF</color>
-    <color name="halfTrans">#80263238</color>
+    <color name="halfTrans">#80000000</color>
 </resources>

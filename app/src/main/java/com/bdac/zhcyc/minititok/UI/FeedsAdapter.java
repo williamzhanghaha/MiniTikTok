@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.bdac.zhcyc.minititok.Network.beans.Feed;
 import com.bdac.zhcyc.minititok.R;
 import com.bumptech.glide.Glide;
+import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 
 import java.util.ArrayList;
@@ -123,12 +124,13 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
         final int realPosition = mHeaderView == null ? position : position - 1;;
         Feed feed = feeds.get(realPosition);
         //TODO 更改bind操作
-//        holder.textView.setText(feed.getVideo_url());
+        holder.textView.setText(feed.getUser_name());
         String imageUrl = feed.getImage_url();
         String videoUrl = feed.getVideo_url();
 
         ImageView imageView = new ImageView(holder.getHolderView().getContext());
         Glide.with(imageView.getContext()).load(imageUrl).into(imageView);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         holder.videoPlayer.setUp(videoUrl, true, "");
         holder.videoPlayer.setThumbImageView(imageView);
@@ -145,7 +147,7 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
     public class FeedViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         //TODO 添加所有控件
-//        private TextView textView;
+        private TextView textView;
         private FeedsListVideoPlayer videoPlayer;
         private View holderView;
 
@@ -158,11 +160,13 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
             holderView = itemView;
             if(itemView == mHeaderView) return;
             if (itemView == mFooterView) return;
-//            textView = itemView.findViewById(R.id.feed_url_view);
+            textView = itemView.findViewById(R.id.textView_name);
             videoPlayer = itemView.findViewById(R.id.item_video_player);
 //            videoPlayer.getTitleTextView().setVisibility(View.GONE);
 //            videoPlayer.getBackButton().setVisibility(View.GONE);
-            videoPlayer.setDismissControlTime(500);
+            videoPlayer.setThumbPlay(true);
+            videoPlayer.setLooping(true);
+            //GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_FULL);
             itemView.setOnClickListener(this);
         }
 

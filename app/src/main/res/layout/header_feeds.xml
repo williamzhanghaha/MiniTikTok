@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="300dp">
+    android:layout_height="100dp">
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="bottom"
+        android:paddingLeft="16dp"
+        android:paddingTop="32dp"
+        android:text="@string/tittle_feeds"
+        android:textColor="#000000"
+        android:textSize="48dp"
+        android:textStyle="bold"/>
 </LinearLayout>
