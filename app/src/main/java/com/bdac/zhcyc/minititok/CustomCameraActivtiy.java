@@ -137,10 +137,12 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                         yR = y0;
                         zoomValue = -1000;
 
-                        Log.d(TAG, "onTouch: X: " + x0 + " Y: " + y0);
+                        //Log.d(TAG, "onTouch: X: " + x0 + " Y: " + y0);
 
                         //setBtnToScale(btnPost,SCALE_NUM);
                         //btnPost.setColorFilter(Color.RED);
+                        btnSwitch.setVisibility(View.INVISIBLE);
+                        btnGalley.setVisibility(View.INVISIBLE);
                         startRecord();
                         break;
                     }
@@ -152,7 +154,7 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                             //Log.d(TAG, "onTouch: X: " + x1 + " Y: " + y1);
 
                             v.setX(x1 - v.getWidth() / 2.0f);
-                            v.setY(y1 - v.getHeight());
+                            v.setY(y1 - v.getHeight() / 1.3f);
 
                             dx = x1 - x0;
                             dy = y1 - y0;
@@ -173,7 +175,14 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                         break;
                     }
                     case MotionEvent.ACTION_UP:{
-
+                        btnGalley.setVisibility(View.VISIBLE);
+                        btnSwitch.setVisibility(View.VISIBLE);
+                        try{
+                            //setBtnToScale(btnPost,1);
+                            setBtnBack(btnPost);
+                        }catch (Exception e){
+                            Log.d(TAG,"animation wrong!");
+                        }
                         break;
                     }
                 }
@@ -209,19 +218,10 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     private void startRecord() {
         if(!isRecording){
             prepareMediaRecorder();
-            btnGalley.setVisibility(View.INVISIBLE);
-            btnSwitch.setVisibility(View.INVISIBLE);
         }
     }
 
     private void finishRecord() {
-        try{
-            //setBtnToScale(btnPost,1);
-            setBtnBack(btnPost);
-        }catch (Exception e){
-            Log.d(TAG,"animation wrong!");
-        }
-
         //btnPost.clearColorFilter();
         try{
             zoomByValue(-1000);
@@ -239,8 +239,8 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                 lauchVideoview(imageUri,videoUri);
             }
         }
-        btnSwitch.setVisibility(View.VISIBLE);
-        btnGalley.setVisibility(View.VISIBLE);
+        //btnSwitch.setVisibility(View.VISIBLE);
+        //btnGalley.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -572,6 +572,8 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
             e.printStackTrace();
         }
 
+//        btnGalley.setVisibility(View.INVISIBLE);
+//        btnSwitch.setVisibility(View.INVISIBLE);
         isRecording = true;
     }
 
@@ -589,11 +591,9 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         }catch (Exception e){
             e.printStackTrace();
             recordFinshed = false;
+//            btnSwitch.setVisibility(View.VISIBLE);
+//            btnGalley.setVisibility(View.VISIBLE);
         }
-
-        //btnGalley.setVisibility(View.VISIBLE);
-        //btnSwitch.setVisibility(View.VISIBLE);
-
 
         try{
             sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(shootVideoPath))));
