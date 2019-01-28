@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.bdac.zhcyc.minititok.MainActivity;
 import com.bdac.zhcyc.minititok.Network.IMiniTikTokService;
 import com.bdac.zhcyc.minititok.Network.beans.Feed;
 import com.bdac.zhcyc.minititok.Network.beans.FeedResponse;
@@ -78,7 +79,7 @@ public class NetworkUtils {
                 item = response.body().getItem();
                 DatabaseUtils.saveItemToDatabase(item);
                 Toast.makeText(context, "Post successfully!", Toast.LENGTH_SHORT).show();
-
+                MainActivity.refreshItems();
             }
 
             @Override

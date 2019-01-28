@@ -76,7 +76,7 @@ public class MeFragment extends Fragment implements ThumbsAdapter.OnThumbClickLi
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //TODO
-                        if (userNameEditText.getText().toString() == "" || studentIdEditText.getText().toString() == "") {
+                        if (userNameEditText.getText().toString().length() == 0 || studentIdEditText.getText().toString().length() == 0) {
                             Toast.makeText(getContext(), "Wrong Input", Toast.LENGTH_SHORT).show();
                         } else {
                             SharedPreferences.Editor editor = sharedPreferences.edit();
