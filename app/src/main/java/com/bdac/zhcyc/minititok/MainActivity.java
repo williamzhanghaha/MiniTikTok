@@ -53,12 +53,14 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton fab;
 
-    private FeedsFragment feedsFragment = new FeedsFragment();
-    private Fragment meFragment = new MeFragment();
+    private static FeedsFragment feedsFragment;
+    private static MeFragment meFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        feedsFragment = new FeedsFragment();
+        meFragment = new MeFragment();
         setContentView(R.layout.activity_main);
 
         DatabaseUtils.dbInit(this);
@@ -125,16 +127,13 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(MainActivity.this,CustomCameraActivtiy.class));
     }
 
-    private void refreshItems () {
+    public static void refreshItems () {
         //TODO 刷新
-        switch (mPager.getCurrentItem()) {
-            case 1:
-                //feeds
-                feedsFragment.refreshFeeds();
-                break;
-            case 0:
-                //me
-                break;
+        try {
+            feedsFragment.refreshFeeds();
+            meFragment.refreshData();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -231,4 +230,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
 }

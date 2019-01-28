@@ -1,15 +1,18 @@
 package com.bdac.zhcyc.minititok.Utilities;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.bdac.zhcyc.minititok.MainActivity;
 import com.bdac.zhcyc.minititok.Network.IMiniTikTokService;
 import com.bdac.zhcyc.minititok.Network.beans.Feed;
 import com.bdac.zhcyc.minititok.Network.beans.FeedResponse;
 import com.bdac.zhcyc.minititok.Network.beans.Item;
 import com.bdac.zhcyc.minititok.Network.beans.PostVideoResponse;
+import com.bdac.zhcyc.minititok.R;
 import com.bdac.zhcyc.minititok.UI.FeedsAdapter;
 
 import java.io.File;
@@ -44,15 +47,21 @@ public class NetworkUtils {
     private static final String TAG = "Seb";
 
     private static final String BASE_URL = "http://10.108.10.39:8080/";
-    private static final String STUDENT_ID = "1120172129";
-    private static final String USER_NAME = "Cyc and zhc";
+    private static String STUDENT_ID = "1120172129";
+    private static String USER_NAME = "Cyc and zhc";
     private static final String IMAGE_NAME = "cover_image";
     private static final String VIDEO_NAME = "video";
+    private static final String PACKAGE_NAME = "com.bdac.zhcyc.minitiktok";
 
     private static List<Feed> feeds = null;
     private static Item item =null;
 
     public static void postVideo(Uri imageUrl, Uri videoUrl, Context context, final RecyclerView rv) {
+
+        SharedPreferences sharedPref = context.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
+        STUDENT_ID = sharedPref.getString(context.getString(R.string.sp_student_id), "1120171065");
+        USER_NAME = sharedPref.getString(context.getString(R.string.sp_user_name), "zhcyc");
+
         Log.d(TAG,imageUrl.toString());
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -70,7 +79,7 @@ public class NetworkUtils {
                 item = response.body().getItem();
                 DatabaseUtils.saveItemToDatabase(item);
                 Toast.makeText(context, "Post successfully!", Toast.LENGTH_SHORT).show();
-
+                MainActivity.refreshItems();
             }
 
             @Override

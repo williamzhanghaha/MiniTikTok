@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.Toast;
 
 import com.bdac.zhcyc.minititok.R;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
@@ -81,5 +82,6 @@ public class FeedsListVideoPlayer extends StandardGSYVideoPlayer {
     @Override
     protected void touchDoubleUp() {
         //super.touchDoubleUp();
+        Toast.makeText(getActivityContext(), "Liked!", Toast.LENGTH_SHORT).show();
     }
 }

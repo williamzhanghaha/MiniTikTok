@@ -50,6 +50,9 @@ public class PostingActivity extends AppCompatActivity {
                 Intent intent = new Intent(PostingActivity.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                Bundle bundle = new Bundle();
+                bundle.putString("refresh", "true");
+                intent.putExtras(bundle);
                 startActivity(intent);
 
             }

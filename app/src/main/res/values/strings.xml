@@ -5,4 +5,10 @@
     <string name="processing_refreshed">Up to date!</string>
     <string name="tittle_feeds">Feeds</string>
     <string name="text_nothing_more">Nothing More!</string>
+    <string name="user_name">User Name:</string>
+    <string name="your_name">Your Name.</string>
+    <string name="student_id">Student ID:</string>
+    <string name="input_info">Input Personal Info</string>
+    <string name="sp_user_name">userName</string>
+    <string name="sp_student_id">studentId</string>
 </resources>
