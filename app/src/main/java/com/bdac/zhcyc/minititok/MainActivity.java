@@ -184,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
                     layoutParams.gravity = Gravity.BOTTOM | Gravity.RIGHT;
                     fab.setLayoutParams(layoutParams);
                 }
+                //Log.d(TAG, "transformPage: " + position);
             }else {
                 if (position == 0) {
                     Log.d(TAG, "transformPage: 0 pos 0");
