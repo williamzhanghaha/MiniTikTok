@@ -308,8 +308,8 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
 
     /**
      * 重载了方法
-     * @param videoUri 参数可以是绝对路径或者uri
-     * @return
+     * @param videoUri 参数可以是绝对路径或者videoUri
+     * @return imageUri
      */
 
     private Uri generateThumbnail(Uri videoUri){
