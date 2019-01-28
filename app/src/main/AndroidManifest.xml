@@ -29,6 +29,7 @@
         </activity>
         <activity android:name=".CustomCameraActivtiy"
             android:hardwareAccelerated="true">
+
         </activity>
         <activity android:name=".PostingActivity">
 
