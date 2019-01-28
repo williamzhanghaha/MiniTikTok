@@ -29,10 +29,12 @@
         </activity>
         <activity android:name=".CustomCameraActivtiy"
             android:hardwareAccelerated="true">
+
         </activity>
         <activity android:name=".PostingActivity">
 
         </activity>
+        <activity android:name=".UI.MePlayerActivity"/>
     </application>
 
 </manifest>

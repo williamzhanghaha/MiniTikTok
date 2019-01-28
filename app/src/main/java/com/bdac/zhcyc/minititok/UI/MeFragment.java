@@ -1,6 +1,10 @@
 package com.bdac.zhcyc.minititok.UI;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +13,8 @@ import com.bdac.zhcyc.minititok.R;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -17,7 +23,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import static com.bdac.zhcyc.minititok.Utilities.DatabaseUtils.loadItemsFromDatabase;
 
-public class MeFragment extends Fragment {
+public class MeFragment extends Fragment implements ThumbsAdapter.OnThumbClickListener {
 
     private RecyclerView recyclerView;
     private ThumbsAdapter adapter;
@@ -64,10 +70,24 @@ public class MeFragment extends Fragment {
             }
         });
 
+        adapter.setOnThumbClickListener(this);
+
         return view;
     }
 
     public void refreshData () {
         adapter.setItems(loadItemsFromDatabase());
+    }
+
+    @Override
+    public void onThumbClick(Bundle bundle, View view) {
+        //TODO 跳转
+        Intent intent = new Intent(getActivity(), MePlayerActivity.class);
+        intent.putExtras(bundle);
+
+        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                getActivity(), view, MePlayerActivity.VIEW_NAME_MAIN);
+
+        ActivityCompat.startActivity(getContext(), intent, activityOptionsCompat.toBundle());
     }
 }

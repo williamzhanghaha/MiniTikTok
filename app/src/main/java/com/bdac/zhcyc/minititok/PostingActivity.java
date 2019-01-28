@@ -39,7 +39,6 @@ public class PostingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.posting);
 
-        editText = findViewById(R.id.editview);
         btnSend = findViewById(R.id.btn_send);
 
         bundle = getIntent().getExtras();
@@ -48,7 +47,10 @@ public class PostingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 NetworkUtils.postVideo(imageUri,videoUri,PostingActivity.this,null);
-                startActivity(new Intent(PostingActivity.this,MainActivity.class));
+                Intent intent = new Intent(PostingActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
 
             }
         });
