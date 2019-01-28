@@ -40,7 +40,6 @@ import static com.bdac.zhcyc.minititok.Utilities.MediaFileUtils.getOutputMediaFi
 import static com.bdac.zhcyc.minititok.Utilities.MediaFileUtils.MEDIA_TYPE_IMAGE;
 import static com.bdac.zhcyc.minititok.Utilities.MediaFileUtils.MEDIA_TYPE_VIDEO;
 import static java.lang.Math.abs;
-import static java.lang.Math.floor;
 
 /**
  * @author Sebb, William
