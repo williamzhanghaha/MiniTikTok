@@ -4,4 +4,5 @@
     <string name="processing_refreshing">Refreshing…</string>
     <string name="processing_refreshed">Up to date!</string>
     <string name="tittle_feeds">Feeds</string>
+    <string name="text_nothing_more">Nothing More!</string>
 </resources>
