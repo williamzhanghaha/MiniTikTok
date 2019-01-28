@@ -67,17 +67,15 @@ public class NetworkUtils {
         ).enqueue(new Callback<PostVideoResponse>(){
             @Override
             public void onResponse(@NonNull Call<PostVideoResponse> call, @NonNull Response<PostVideoResponse> response) {
-                Log.d(TAG, "post response!");
-
                 item = response.body().getItem();
-
                 DatabaseUtils.saveItemToDatabase(item);
                 Toast.makeText(context, "Post successfully!", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
             public void onFailure(@NonNull Call<PostVideoResponse> call,@NonNull Throwable t) {
-                Log.d(TAG,"post failed!");
+                Toast.makeText(context, "Post failed!", Toast.LENGTH_SHORT).show();
             }
         });
     }

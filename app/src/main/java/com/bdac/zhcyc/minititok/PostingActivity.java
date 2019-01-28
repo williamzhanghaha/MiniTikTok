@@ -26,12 +26,6 @@ public class PostingActivity extends AppCompatActivity {
     private EditText editText;
     private FloatingActionButton btnSend;
 
-    public void setPostSuccess(boolean postSuccess) {
-        isPostSuccess = postSuccess;
-    }
-
-    private boolean isPostSuccess = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +47,8 @@ public class PostingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 NetworkUtils.postVideo(imageUri,videoUri,PostingActivity.this,null);
+                startActivity(new Intent(PostingActivity.this,MainActivity.class));
+
             }
         });
 

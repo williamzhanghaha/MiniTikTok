@@ -191,15 +191,7 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                                 Uri imageUri = generateThumbnail(shootVideoPath);
                                 Uri videoUri = Uri.fromFile(new File(shootVideoPath));
 
-                                String stringImageUri = imageUri.toString();
-                                String stringVideoUri = videoUri.toString();
-
-                                Intent intent = new Intent();
-                                intent.putExtra("imageUri",stringImageUri);
-                                intent.putExtra("videoUri",stringVideoUri);
-
-                                intent.setClass(CustomCameraActivtiy.this,PostingActivity.class);
-                                startActivity(intent);
+                                lauchVideoview(imageUri,videoUri);
                             }
                         }
 
@@ -366,10 +358,10 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
             }
 
             if(hasSelectedVideo){
+                //Todo
                 selectImageUri = generateThumbnail(selectVideoUri);
-                Log.d(TAG,"posting!");
-                NetworkUtils.postVideo(selectImageUri, selectVideoUri,CustomCameraActivtiy.this,null);
                 resetSelection();
+                lauchVideoview(selectImageUri,selectVideoUri);
             }
         }
     }
@@ -377,6 +369,19 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     private void resetSelection(){
         hasSelectedImage = false;
         hasSelectedVideo = false;
+    }
+
+    private void lauchVideoview(Uri imageUri,Uri videoUri){
+        String stringimageUri = imageUri.toString();
+        String stringvideoUri = videoUri.toString();
+
+        Intent intent = new Intent();
+
+        intent.putExtra("imageUri",stringimageUri);
+        intent.putExtra("videoUri",stringvideoUri);
+
+        intent.setClass(CustomCameraActivtiy.this,PostingActivity.class);
+        startActivity(intent);
     }
 
     private Camera getmCamera(final int CAMERA_TYPE){
