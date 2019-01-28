@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHolder>{
@@ -49,7 +52,9 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
         if (feeds != null) {
             this.feeds = feeds;
         }
-        notifyDataSetChanged();
+        for (int i = 0; i < feeds.size(); i++){
+            notifyItemChanged(i + 1);
+        }
         feedListRefreshedListener.onFeedListItemRefreshed();
     }
 
@@ -135,6 +140,8 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
         holder.videoPlayer.setUp(videoUrl, true, "");
         holder.videoPlayer.setThumbImageView(imageView);
 
+        setAnimation(holder.cardView);
+
     }
 
     @Override
@@ -151,6 +158,8 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
         private FeedsListVideoPlayer videoPlayer;
         private View holderView;
 
+        private CardView cardView;
+
         public View getHolderView() {
             return holderView;
         }
@@ -160,6 +169,7 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
             holderView = itemView;
             if(itemView == mHeaderView) return;
             if (itemView == mFooterView) return;
+            cardView = itemView.findViewById(R.id.feeds_card_view);
             textView = itemView.findViewById(R.id.textView_name);
             videoPlayer = itemView.findViewById(R.id.item_video_player);
 //            videoPlayer.getTitleTextView().setVisibility(View.GONE);
@@ -181,6 +191,23 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
             if (feedListItemClickListener != null) {
                 feedListItemClickListener.onFeedListItemClicked(clickedPosition, feeds.get(clickedPosition));
             }
+        }
+    }
+
+
+    private void setAnimation(View viewToAnimate) {
+            Animation animation = AnimationUtils.loadAnimation(viewToAnimate.getContext(), R
+                    .anim.item_bottom_in);
+            viewToAnimate.startAnimation(animation);
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull FeedViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        try {
+            holder.cardView.clearAnimation();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

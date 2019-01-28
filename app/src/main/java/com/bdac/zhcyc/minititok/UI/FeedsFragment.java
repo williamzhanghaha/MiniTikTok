@@ -14,6 +14,7 @@ import com.bdac.zhcyc.minititok.Utilities.NetworkUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class FeedsFragment extends Fragment implements FeedsAdapter.FeedListItemClickListener, FeedsAdapter.FeedListRefreshedListener {
@@ -42,6 +43,9 @@ public class FeedsFragment extends Fragment implements FeedsAdapter.FeedListItem
         adapter.setFeedListItemClickListener(this);
         adapter.setFeedListRefreshedListener(this);
         NetworkUtils.fetchFeed(recyclerView);
+
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
 
         return view;
     }
