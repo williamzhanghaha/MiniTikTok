@@ -26,22 +26,23 @@ public class PostingActivity extends AppCompatActivity {
     private EditText editText;
     private FloatingActionButton btnSend;
 
+    private String stringImageUri;
+    private String stringVideoUri;
+
+    private Uri imageUri;
+    private Uri videoUri;
+
+    private Bundle bundle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.posting);
 
-        videoView = findViewById(R.id.video_view);
         editText = findViewById(R.id.editview);
         btnSend = findViewById(R.id.btn_send);
 
-        Bundle bundle = getIntent().getExtras();
-
-        String stringImageUri = bundle.getString("imageUri");
-        String stringVideoUri = bundle.getString("videoUri");
-
-        Uri imageUri = Uri.parse(stringImageUri);
-        Uri videoUri = Uri.parse(stringVideoUri);
+        bundle = getIntent().getExtras();
 
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,6 +52,26 @@ public class PostingActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        prepareVideoview();
+    }
+
+    private void prepareVideoview(){
+        videoView = findViewById(R.id.video_view);
+
+        stringImageUri = bundle.getString("imageUri");
+        stringVideoUri = bundle.getString("videoUri");
+
+        imageUri = Uri.parse(stringImageUri);
+        videoUri = Uri.parse(stringVideoUri);
+
+        videoView.setVideoURI(videoUri);
+        videoView.start();
+
 
         videoView.setOnPreparedListener (new MediaPlayer.OnPreparedListener() {
             @Override
@@ -58,8 +79,5 @@ public class PostingActivity extends AppCompatActivity {
                 mp.setLooping(true);
             }
         });
-
-        videoView.setVideoURI(videoUri);
-        videoView.start();
     }
 }

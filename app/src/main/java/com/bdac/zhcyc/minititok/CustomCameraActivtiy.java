@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.function.LongFunction;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -89,6 +90,7 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     private float MAX_Y;
 
     private float x0,y0,x1,y1,dx,dy;
+    private int zoomValue;
 
     private Uri woyebuzhidaoshiganshenmedeUri = null;
 
@@ -129,9 +131,9 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
 
                 switch (event.getAction()){
                     case MotionEvent.ACTION_DOWN:{
-                        Log.d(TAG,"down");
                         x0 = event.getRawX();
                         y0 = event.getRawY();
+                        zoomValue = -1000;
 
                         setBtnToScale(btnPost,SCALE_NUM);
                         btnPost.setColorFilter(Color.RED);
@@ -141,24 +143,21 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                         break;
                     }
                     case MotionEvent.ACTION_MOVE:{
-                        Log.d(TAG,"move");
                         if(isRecording){
                             x1 = event.getRawX();
                             y1 = event.getRawY();
 
                             v.setX(x1 - v.getWidth() / 2.0f);
-                            v.setY(y1 - v.getHeight() / 2.0f);
+                            v.setY(y1 - v.getHeight());
 
                             dx = x1 - x0;
                             dy = y1 - y0;
                             x0 = x1;
                             y0 = y1;
 
-                            int zoomValue = 0;
-
-                            if(dy>0){
+                            if(dy>5){
                                 zoomValue = -1;
-                            }else{
+                            }else if(dy<-5){
                                 zoomValue = 1;
                             }
 //                        zoomValue = ((-dy*ZOOM_MAX)/(MAX_Y-y0));
@@ -168,7 +167,6 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                         break;
                     }
                     case MotionEvent.ACTION_UP:{
-                        Log.d(TAG,"up");
                         try{
                             setBtnToScale(btnPost,1);
                             setBtnBack(btnPost);
@@ -451,14 +449,12 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
 
         if(0<=nextZoomValue&&nextZoomValue<ZOOM_MAX){
             parameters.setZoom(nextZoomValue);
-            mCamera.setParameters(parameters);
         }else if(nextZoomValue>=ZOOM_MAX){
             parameters.setZoom(ZOOM_MAX-1);
-            mCamera.setParameters(parameters);
         }else if(nextZoomValue<0){
             parameters.setZoom(0);
-            mCamera.setParameters(parameters);
         }
+        mCamera.setParameters(parameters);
     }
 
     private void swithCamera(){
