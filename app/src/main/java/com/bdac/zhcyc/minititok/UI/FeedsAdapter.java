@@ -65,7 +65,7 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
 
     public void setFooterView(View footerView) {
         mFooterView = footerView;
-        notifyDataSetChanged();
+        notifyItemInserted(feeds.size() + 1);
     }
 
     public View getHeaderView() {

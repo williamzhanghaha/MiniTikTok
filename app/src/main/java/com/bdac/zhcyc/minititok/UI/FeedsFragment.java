@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class FeedsFragment extends Fragment implements FeedsAdapter.FeedListItemClickListener, FeedsAdapter.FeedListRefreshedListener {
     public static final String TAG = "FeedsFragment";
@@ -23,6 +24,7 @@ public class FeedsFragment extends Fragment implements FeedsAdapter.FeedListItem
     private RecyclerView recyclerView;
     private FeedsAdapter adapter;
     private SmoothScrollLayoutManager layoutManager;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private Toast toast;
 
@@ -45,6 +47,32 @@ public class FeedsFragment extends Fragment implements FeedsAdapter.FeedListItem
         NetworkUtils.fetchFeed(recyclerView);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        swipeRefreshLayout = view.findViewById(R.id.srl_feeds);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshFeeds();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                int topRowVerticalPosition =
+                        (recyclerView == null || recyclerView.getChildCount() == 0) ? 0 :
+                                recyclerView.getChildAt(0).getTop();
+                swipeRefreshLayout.setEnabled(topRowVerticalPosition >= 0);
+
+            }
+
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
 
 
         return view;
