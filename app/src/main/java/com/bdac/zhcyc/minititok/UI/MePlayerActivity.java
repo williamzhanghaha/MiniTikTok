@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.bdac.zhcyc.minititok.R;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 public class MePlayerActivity extends AppCompatActivity {
 
@@ -41,7 +42,9 @@ public class MePlayerActivity extends AppCompatActivity {
         }
 
         ImageView imageView = new ImageView(this);
-        Glide.with(imageView.getContext()).load(imageUrl).into(imageView);
+        Glide.with(imageView.getContext())
+                .setDefaultRequestOptions(new RequestOptions().centerCrop().error(R.drawable.pic_nothing).placeholder(R.drawable.pic_nothing))
+                .load(imageUrl).into(imageView);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         videoPlayer.setUp(videoUrl, true, "");

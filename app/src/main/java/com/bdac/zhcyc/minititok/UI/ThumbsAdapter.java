@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import com.bdac.zhcyc.minititok.Network.beans.Item;
 import com.bdac.zhcyc.minititok.R;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +61,9 @@ public class ThumbsAdapter extends RecyclerView.Adapter<ThumbsAdapter.ThumbViewH
 
         ImageView imageView = holder.imageView;
 
-        Glide.with(imageView.getContext()).load(imageUrl).into(imageView);
+        Glide.with(imageView.getContext())
+                .setDefaultRequestOptions(new RequestOptions().centerCrop().error(R.drawable.pic_nothing).placeholder(R.drawable.pic_nothing))
+                .load(imageUrl).into(imageView);
     }
 
     @Override

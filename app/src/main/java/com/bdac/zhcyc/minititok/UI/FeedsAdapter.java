@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.bdac.zhcyc.minititok.Network.beans.Feed;
 import com.bdac.zhcyc.minititok.R;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 
@@ -134,7 +135,9 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
         String videoUrl = feed.getVideo_url();
 
         ImageView imageView = new ImageView(holder.getHolderView().getContext());
-        Glide.with(imageView.getContext()).load(imageUrl).into(imageView);
+        Glide.with(imageView.getContext())
+                .setDefaultRequestOptions(new RequestOptions().centerCrop().error(R.drawable.pic_nothing).placeholder(R.drawable.pic_nothing))
+                .load(imageUrl).into(imageView);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         holder.videoPlayer.setUp(videoUrl, true, "");

@@ -22,6 +22,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewTreeObserver;
+
+import com.bdac.zhcyc.minititok.UI.CircleButtonView;
 import com.bdac.zhcyc.minititok.Utilities.MediaFileUtils;
 import com.bdac.zhcyc.minititok.Utilities.NetworkUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -44,14 +46,14 @@ import static java.lang.Math.abs;
  * @date 2019/1/26
  */
 
-public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHolder.Callback{
+public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHolder.Callback, CircleButtonView.OnLongClickListener {
 
     private static final String TAG = "Seb";
 
     private SurfaceView mSurfaceView;
     private SurfaceHolder mSurfaceHolder;
 
-    private FloatingActionButton btnPost;
+    private CircleButtonView btnPost;
     private FloatingActionButton btnGalley;
     private FloatingActionButton btnSwitch;
 
@@ -108,7 +110,7 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         MAX_X = size.x;
         MAX_Y = size.y;
 
-        btnPost = findViewById(R.id.btn_post);
+        btnPost = findViewById(R.id.btn_cam);
         btnGalley = findViewById(R.id.btn_gallery);
         btnSwitch = findViewById(R.id.btn_switch);
 
@@ -123,23 +125,18 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
             }
         });
 
-        btnPost.setOnClickListener(null);
-
-        btnPost.setOnTouchListener(new View.OnTouchListener() {
+        btnPost.setOnTouchListener(new CircleButtonView.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-
                 switch (event.getAction()){
                     case MotionEvent.ACTION_DOWN:{
                         x0 = event.getRawX();
                         y0 = event.getRawY();
                         zoomValue = -1000;
 
-                        setBtnToScale(btnPost,SCALE_NUM);
-                        btnPost.setColorFilter(Color.RED);
-                        if(!isRecording){
-                            prepareMediaRecorder();
-                        }
+                        //setBtnToScale(btnPost,SCALE_NUM);
+                        //btnPost.setColorFilter(Color.RED);
+                        startRecord();
                         break;
                     }
                     case MotionEvent.ACTION_MOVE:{
@@ -167,39 +164,16 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                         break;
                     }
                     case MotionEvent.ACTION_UP:{
-                        try{
-                            setBtnToScale(btnPost,1);
-                            setBtnBack(btnPost);
-                        }catch (Exception e){
-                            Log.d(TAG,"animation wrong!");
-                        }
-
-                        btnPost.clearColorFilter();
-                        try{
-                            zoomByValue(-1000);
-                        }catch (Exception e){
-                            Log.d(TAG,"Wrong!");
-                        }
-
-                        if(isRecording){
-
-                            releaseMediaRecorder();
-
-                            if(recordFinshed){
-                                Uri imageUri = generateThumbnail(shootVideoPath);
-                                Uri videoUri = Uri.fromFile(new File(shootVideoPath));
-
-                                lauchVideoview(imageUri,videoUri);
-                            }
-                        }
 
                         break;
                     }
                 }
-                return true;
+                return false;
             }
 
         });
+
+        btnPost.setOnLongClickListener(this);
 
         btnGalley.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -222,6 +196,39 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         mSurfaceHolder.addCallback(this);
     }
 
+
+    private void startRecord() {
+        if(!isRecording){
+            prepareMediaRecorder();
+        }
+    }
+
+    private void finishRecord() {
+        try{
+            //setBtnToScale(btnPost,1);
+            setBtnBack(btnPost);
+        }catch (Exception e){
+            Log.d(TAG,"animation wrong!");
+        }
+
+        //btnPost.clearColorFilter();
+        try{
+            zoomByValue(-1000);
+        }catch (Exception e){
+            Log.d(TAG,"Wrong!");
+        }
+        if(isRecording){
+
+            releaseMediaRecorder();
+
+            if(recordFinshed){
+                Uri imageUri = generateThumbnail(shootVideoPath);
+                Uri videoUri = Uri.fromFile(new File(shootVideoPath));
+
+                lauchVideoview(imageUri,videoUri);
+            }
+        }
+    }
 
     @Override
     protected void onPause() {
@@ -293,7 +300,7 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         animatorSet.start();
     }
 
-    private void setBtnBack(FloatingActionButton btn){
+    private void setBtnBack(CircleButtonView btn){
         ObjectAnimator transX = ObjectAnimator.ofFloat(btn,"X",INI_X-btnPost.getWidth()/2f);
         transX.setDuration(500);
 
@@ -474,8 +481,8 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     }
 
     private void prepareMediaRecorder(){
-        btnGalley.setVisibility(View.GONE);
-        btnSwitch.setVisibility(View.GONE);
+        //btnGalley.setVisibility(View.GONE);
+        //btnSwitch.setVisibility(View.GONE);
 
         mMediaRecorder = new MediaRecorder();
         mCamera.unlock();
@@ -537,8 +544,8 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
             recordFinshed = false;
         }
 
-        btnGalley.setVisibility(View.VISIBLE);
-        btnSwitch.setVisibility(View.VISIBLE);
+        //btnGalley.setVisibility(View.VISIBLE);
+        //btnSwitch.setVisibility(View.VISIBLE);
 
 
         try{
@@ -636,5 +643,22 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
             }
         }
         return optimalSize;
+    }
+
+    @Override
+    public void onLongClick() {
+
+    }
+
+    @Override
+    public void onNoMinRecord(int currentTime) {
+        Log.d(TAG, "onNoMinRecord: NNN");
+        finishRecord();
+    }
+
+    @Override
+    public void onRecordFinishedListener() {
+        Log.d(TAG, "onRecordFinishedListener: NNNM");
+        finishRecord();
     }
 }
