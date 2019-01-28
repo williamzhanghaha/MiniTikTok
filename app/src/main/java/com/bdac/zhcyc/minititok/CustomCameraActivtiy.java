@@ -40,15 +40,16 @@ import static com.bdac.zhcyc.minititok.Utilities.MediaFileUtils.getOutputMediaFi
 import static com.bdac.zhcyc.minititok.Utilities.MediaFileUtils.MEDIA_TYPE_IMAGE;
 import static com.bdac.zhcyc.minititok.Utilities.MediaFileUtils.MEDIA_TYPE_VIDEO;
 import static java.lang.Math.abs;
+import static java.lang.Math.floor;
 
 /**
- * @author Sebb,
+ * @author Sebb, William
  * @date 2019/1/26
  */
 
 public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHolder.Callback, CircleButtonView.OnLongClickListener {
 
-    private static final String TAG = "Seb";
+    private static final String TAG = "CustomCameraActivity";
 
     private SurfaceView mSurfaceView;
     private SurfaceHolder mSurfaceHolder;
@@ -92,6 +93,7 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     private float MAX_Y;
 
     private float x0,y0,x1,y1,dx,dy;
+    private float xR, yR;
     private int zoomValue;
 
     private Uri woyebuzhidaoshiganshenmedeUri = null;
@@ -132,7 +134,11 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                     case MotionEvent.ACTION_DOWN:{
                         x0 = event.getRawX();
                         y0 = event.getRawY();
+                        xR = x0;
+                        yR = y0;
                         zoomValue = -1000;
+
+                        Log.d(TAG, "onTouch: X: " + x0 + " Y: " + y0);
 
                         //setBtnToScale(btnPost,SCALE_NUM);
                         //btnPost.setColorFilter(Color.RED);
@@ -144,6 +150,8 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                             x1 = event.getRawX();
                             y1 = event.getRawY();
 
+                            //Log.d(TAG, "onTouch: X: " + x1 + " Y: " + y1);
+
                             v.setX(x1 - v.getWidth() / 2.0f);
                             v.setY(y1 - v.getHeight());
 
@@ -152,14 +160,16 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                             x0 = x1;
                             y0 = y1;
 
-                            if(dy>5){
-                                zoomValue = -1;
-                            }else if(dy<-5){
-                                zoomValue = 1;
-                            }
-//                        zoomValue = ((-dy*ZOOM_MAX)/(MAX_Y-y0));
+                            calcZoomParm();
 
-                            zoomByValue(zoomValue);
+//                            if(dy>5){
+//                                zoomValue = -1;
+//                            }else if(dy<-5){
+//                                zoomValue = 1;
+//                            }
+////                        zoomValue = ((-dy*ZOOM_MAX)/(MAX_Y-y0));
+//
+//                            zoomByValue(zoomValue);
                         }
                         break;
                     }
@@ -200,6 +210,8 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     private void startRecord() {
         if(!isRecording){
             prepareMediaRecorder();
+            btnGalley.setVisibility(View.INVISIBLE);
+            btnSwitch.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -228,6 +240,8 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                 lauchVideoview(imageUri,videoUri);
             }
         }
+        btnSwitch.setVisibility(View.VISIBLE);
+        btnGalley.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -425,6 +439,40 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         mCamera.stopPreview();
         mCamera.release();
         mCamera=null;
+    }
+
+    private void calcZoomParm () {
+
+        //Log.d(TAG, "calcZoomParm: " + yR + " " + y1);
+        //TODO zp
+        float yMovePercent;
+        if (yR > y1) {
+            yMovePercent = (yR - y1) / yR;
+            int newZoom = (int) ((float)ZOOM_MAX * yMovePercent);
+            //Log.d(TAG, "calcZoomParm: newZoom = " + newZoom);
+            zoomByParm(newZoom);
+        }
+    }
+
+    private void zoomByParm (int zoomValue) {
+        if(mCamera == null){
+            return;
+        }
+
+        Camera.Parameters parameters = mCamera.getParameters();
+
+        if(!parameters.isZoomSupported()){
+            return;
+        }
+
+        if(0<=zoomValue&&zoomValue<ZOOM_MAX){
+            parameters.setZoom(zoomValue);
+        }else if(zoomValue>=ZOOM_MAX){
+            parameters.setZoom(ZOOM_MAX-1);
+        }else if(zoomValue<0){
+            parameters.setZoom(0);
+        }
+        mCamera.setParameters(parameters);
     }
 
     private void zoomInit(){
