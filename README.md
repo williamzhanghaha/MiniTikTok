@@ -12,6 +12,11 @@
 2.用andriod studio打开<br>
 3.运行<br>
 
+<h4>使用外部库</h4>
+1.glide
+2.restrofit
+3.GSYvideoplayer
+
 <h4>程序特点</h4>
 1.使用viewPager实现主页面的UI设计<br>
 2.使用sharedpreference存储姓名学号<br>
