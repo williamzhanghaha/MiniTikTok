@@ -42,13 +42,13 @@ import static com.bdac.zhcyc.minititok.Utilities.MediaFileUtils.MEDIA_TYPE_VIDEO
 import static java.lang.Math.abs;
 
 /**
- * @author Sebb,
+ * @author Sebb, William
  * @date 2019/1/26
  */
 
 public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHolder.Callback, CircleButtonView.OnLongClickListener {
 
-    private static final String TAG = "Seb";
+    private static final String TAG = "CustomCameraActivity";
 
     private SurfaceView mSurfaceView;
     private SurfaceHolder mSurfaceHolder;
@@ -92,6 +92,7 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     private float MAX_Y;
 
     private float x0,y0,x1,y1,dx,dy;
+    private float xR, yR;
     private int zoomValue;
 
     private Uri woyebuzhidaoshiganshenmedeUri = null;
@@ -132,10 +133,16 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                     case MotionEvent.ACTION_DOWN:{
                         x0 = event.getRawX();
                         y0 = event.getRawY();
+                        xR = x0;
+                        yR = y0;
                         zoomValue = -1000;
+
+                        //Log.d(TAG, "onTouch: X: " + x0 + " Y: " + y0);
 
                         //setBtnToScale(btnPost,SCALE_NUM);
                         //btnPost.setColorFilter(Color.RED);
+                        btnSwitch.setVisibility(View.INVISIBLE);
+                        btnGalley.setVisibility(View.INVISIBLE);
                         startRecord();
                         break;
                     }
@@ -144,27 +151,38 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                             x1 = event.getRawX();
                             y1 = event.getRawY();
 
+                            //Log.d(TAG, "onTouch: X: " + x1 + " Y: " + y1);
+
                             v.setX(x1 - v.getWidth() / 2.0f);
-                            v.setY(y1 - v.getHeight());
+                            v.setY(y1 - v.getHeight() / 1.3f);
 
                             dx = x1 - x0;
                             dy = y1 - y0;
                             x0 = x1;
                             y0 = y1;
 
-                            if(dy>5){
-                                zoomValue = -1;
-                            }else if(dy<-5){
-                                zoomValue = 1;
-                            }
-//                        zoomValue = ((-dy*ZOOM_MAX)/(MAX_Y-y0));
+                            calcZoomParm();
 
-                            zoomByValue(zoomValue);
+//                            if(dy>5){
+//                                zoomValue = -1;
+//                            }else if(dy<-5){
+//                                zoomValue = 1;
+//                            }
+////                        zoomValue = ((-dy*ZOOM_MAX)/(MAX_Y-y0));
+//
+//                            zoomByValue(zoomValue);
                         }
                         break;
                     }
                     case MotionEvent.ACTION_UP:{
-
+                        btnGalley.setVisibility(View.VISIBLE);
+                        btnSwitch.setVisibility(View.VISIBLE);
+                        try{
+                            //setBtnToScale(btnPost,1);
+                            setBtnBack(btnPost);
+                        }catch (Exception e){
+                            Log.d(TAG,"animation wrong!");
+                        }
                         break;
                     }
                 }
@@ -204,13 +222,6 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
     }
 
     private void finishRecord() {
-        try{
-            //setBtnToScale(btnPost,1);
-            setBtnBack(btnPost);
-        }catch (Exception e){
-            Log.d(TAG,"animation wrong!");
-        }
-
         //btnPost.clearColorFilter();
         try{
             zoomByValue(-1000);
@@ -228,6 +239,8 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
                 lauchVideoview(imageUri,videoUri);
             }
         }
+        //btnSwitch.setVisibility(View.VISIBLE);
+        //btnGalley.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -427,6 +440,40 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         mCamera=null;
     }
 
+    private void calcZoomParm () {
+
+        //Log.d(TAG, "calcZoomParm: " + yR + " " + y1);
+        //TODO zp
+        float yMovePercent;
+        if (yR > y1) {
+            yMovePercent = (yR - y1) / yR;
+            int newZoom = (int) ((float)ZOOM_MAX * yMovePercent);
+            //Log.d(TAG, "calcZoomParm: newZoom = " + newZoom);
+            zoomByParm(newZoom);
+        }
+    }
+
+    private void zoomByParm (int zoomValue) {
+        if(mCamera == null){
+            return;
+        }
+
+        Camera.Parameters parameters = mCamera.getParameters();
+
+        if(!parameters.isZoomSupported()){
+            return;
+        }
+
+        if(0<=zoomValue&&zoomValue<ZOOM_MAX){
+            parameters.setZoom(zoomValue);
+        }else if(zoomValue>=ZOOM_MAX){
+            parameters.setZoom(ZOOM_MAX-1);
+        }else if(zoomValue<0){
+            parameters.setZoom(0);
+        }
+        mCamera.setParameters(parameters);
+    }
+
     private void zoomInit(){
         if(mCamera == null){
             return;
@@ -525,6 +572,8 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
             e.printStackTrace();
         }
 
+//        btnGalley.setVisibility(View.INVISIBLE);
+//        btnSwitch.setVisibility(View.INVISIBLE);
         isRecording = true;
     }
 
@@ -542,11 +591,9 @@ public class CustomCameraActivtiy extends AppCompatActivity implements SurfaceHo
         }catch (Exception e){
             e.printStackTrace();
             recordFinshed = false;
+//            btnSwitch.setVisibility(View.VISIBLE);
+//            btnGalley.setVisibility(View.VISIBLE);
         }
-
-        //btnGalley.setVisibility(View.VISIBLE);
-        //btnSwitch.setVisibility(View.VISIBLE);
-
 
         try{
             sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(shootVideoPath))));
