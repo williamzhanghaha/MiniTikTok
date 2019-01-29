@@ -14,10 +14,11 @@
 
 <h4>程序特点</h4>
 1.使用viewPager实现主页面的UI设计<br>
-2.使用animator实现recyclerView的scroll动画<br>
-3.视频录制按钮随手指移动，并可实时调焦距<br>
-4.自动生成视频缩略图<br>
-5.个人主页查看已经发送的视频<br>
+2.使用sharedpreference存储姓名学号<br>
+3.使用animator实现recyclerView的scroll动画<br>
+4.视频录制按钮随手指移动，并可实时调焦距<br>
+5.自动生成视频缩略图<br>
+6.个人主页查看已经发送的视频<br>
 
 <h4>贡献者</h4>
 张翰宸<br>
