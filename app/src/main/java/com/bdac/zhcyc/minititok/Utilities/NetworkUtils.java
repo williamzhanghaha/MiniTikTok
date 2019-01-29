@@ -56,7 +56,7 @@ public class NetworkUtils {
     private static List<Feed> feeds = null;
     private static Item item =null;
 
-    public static void postVideo(Uri imageUrl, Uri videoUrl, Context context, final RecyclerView rv) {
+    public static void postVideo(Uri imageUrl, Uri videoUrl, Context context) {
 
         SharedPreferences sharedPref = context.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
         STUDENT_ID = sharedPref.getString(context.getString(R.string.sp_student_id), "1120171065");

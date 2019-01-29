@@ -46,7 +46,7 @@ public class PostingActivity extends AppCompatActivity {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NetworkUtils.postVideo(imageUri,videoUri,PostingActivity.this,null);
+                NetworkUtils.postVideo(imageUri,videoUri,PostingActivity.this);
                 Intent intent = new Intent(PostingActivity.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

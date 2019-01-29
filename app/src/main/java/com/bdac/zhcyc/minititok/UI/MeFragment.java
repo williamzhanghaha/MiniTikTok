@@ -7,12 +7,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -94,7 +97,17 @@ public class MeFragment extends Fragment implements ThumbsAdapter.OnThumbClickLi
 
                     }
                 });
-                alertDialog = builder.show();
+
+                alertDialog = builder.create();
+                alertDialog.show();
+
+                Button nbutton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+                nbutton.setTextColor(Color.BLACK);
+                nbutton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
+                Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                pbutton.setTextColor(Color.BLACK);
+                pbutton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
+
             }
         });
 
